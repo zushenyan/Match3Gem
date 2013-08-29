@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+</head>
+<body>
+</body>
+<script src="source/Gem.js"></script>
+<script src="source/Board.js"></script>
+<script>
+	// function func3(a, b, c){
+	// 	for(var i = 0; i < arguments.length; i++){
+	// 		console.log(arguments[i]);
+	// 	}
+	// }
+
+	// function obj(){};
+
+	// obj.prototype.func = function() {
+		
+	// };
+
+	// obj.prototype.func2 = function() {
+		
+	// };
+
+	// obj.prototype.constructor = obj;
+
+
+	// var arr1 = [1,2,3];
+	// var arr2 = arr1;
+
+	// arr2[1] = 5;
+
+	// console.log(arr1);
+
+
+	var b = new Board();
+
+	b.printBoard();
+
+	var r = Board.actionSwapGems(b,3,5,7,6);
+	console.log(r);
+	b.applyAction(r);
+
+	b.printBoard();
+
+	var r = Board.findAllMatchedGems(b);
+	console.log(r);
+	Board.removeGemsWithList(b, r);
+
+	b.printBoard();
+
+	r = Board.makeGemsFall(b);
+	console.log(r);
+	b.printBoard();
+
+	r = Board.fillEmptyGems(b);
+	console.log(r);
+	b.printBoard();
+</script>
+</html>

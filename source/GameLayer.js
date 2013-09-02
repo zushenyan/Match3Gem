@@ -1,31 +1,30 @@
-var BoardLayer = cc.Layer.extend({
-	BOARD_SIZE: Board.BOARD_SIZE,
+var GameLayer = cc.Layer.extend({
+	BOARD_SIZE: m3g.Board.SIZE,
+	GEM_SCORE: 100,
 
 	_board: null,
 	_gemSprites: null,
-	_desitinationPositionBoard: null,
+	_destinationPositionBoard: null,
 	_labels: null,
 
 	_switchedSprite1: null,
 	_switchedSprite2: null,
-	_madeAMove: null,
-	_swapResult: null,
 	_mouseSuspended: null,
 	_action: null,
+
+	_gameManager: null,
 
 	_bg: null,
 
 	_controlController: null,
 
-	_firstBoardLocation: null,
-	_secondBoardLocation: null,
-
-	init: function(){
-		this._board = new Board();
-		this._madeAMove = false;
-		this._runATurn = false;
+	ctor: function(gm){
+		this._super();
+		this._board = new m3g.Board();
 		this._mouseSuspended = false;
-		this._action = new Action();
+		this._action = new m3g.Action();
+
+		this._gameManager = gm;
 
 		this.initBackground();
 		this.initGemSprites();
@@ -56,7 +55,7 @@ var BoardLayer = cc.Layer.extend({
 		for(var y = 0; y < this.BOARD_SIZE; y++){
 			for(var x = 0; x < this.BOARD_SIZE; x++){
 				var index = this.BOARD_SIZE * y + x;
-				var type = this._board.getBoard()[y][x].getType();
+				var type = this._board.getBoardXY(x, y).getType();
 				var gem = GemSprite.createGemSprite(type);
 				this.addChild(gem);
 				this._gemSprites.push(gem);
@@ -64,24 +63,24 @@ var BoardLayer = cc.Layer.extend({
 		}
 	},
 	initDestinationPositionBoard: function(){
-		this._desitinationPositionBoard = new Array(this.BOARD_SIZE);
+		this._destinationPositionBoard = new Array(this.BOARD_SIZE);
 
-		for(var i = 0; i < this._desitinationPositionBoard.length; i++){
-			this._desitinationPositionBoard[i] = new Array(this.BOARD_SIZE);
+		for(var i = 0; i < this._destinationPositionBoard.length; i++){
+			this._destinationPositionBoard[i] = new Array(this.BOARD_SIZE);
 		}
 
-		for(var y = this._desitinationPositionBoard.length - 1, arrY = 0; y >= 0; y--, arrY++){
-			for(var x = 0; x < this._desitinationPositionBoard[y].length; x++){
+		for(var y = this._destinationPositionBoard.length - 1, arrY = 0; y >= 0; y--, arrY++){
+			for(var x = 0; x < this._destinationPositionBoard[y].length; x++){
 				var px = GemSprite.getSpriteWidth() * x;
 				var py = GemSprite.getSpriteHeight() * y;
-				this._desitinationPositionBoard[arrY][x] = cc.p(px, py);
+				this._destinationPositionBoard[arrY][x] = cc.p(px, py);
 			}
 		}
 	},
 	initSpritesPositionAndDestination: function(){
-		var graphicsY = this._desitinationPositionBoard.length - 1;
-		for(var y = 0; y < this._desitinationPositionBoard.length; y++){
-			for(var x = 0; x < this._desitinationPositionBoard[y].length; x++){
+		var graphicsY = this._destinationPositionBoard.length - 1;
+		for(var y = 0; y < this._destinationPositionBoard.length; y++){
+			for(var x = 0; x < this._destinationPositionBoard[y].length; x++){
 				var index = this.BOARD_SIZE * y + x;
 				var px = GemSprite.getSpriteWidth() * x;
 				var py = GemSprite.getSpriteHeight() * graphicsY;
@@ -160,14 +159,20 @@ var BoardLayer = cc.Layer.extend({
 
 
 	update: function(dt){
-		if(this.hasAnimationRunningDone(this._switchedSprite1, this._switchedSprite2)){
-			this._board.applyAction(this._action);
-
-			this._switchedSprite1 = null;
-			this._switchedSprite2 = null;
+		if(this._gameManager.isGameOver()){
+			return;
 		}
 
+		this._gameManager.updateTime(dt);
+
 		if(this.allGemsHaveLanded()){
+			if(this.hasAnimationRunningDone(this._switchedSprite1, this._switchedSprite2)){
+				this._board.applyAction(this._action);
+
+				this._switchedSprite1 = null;
+				this._switchedSprite2 = null;
+				// this._action = new Action();
+			}
 			this._mouseSuspended = false;
 			if(this.hasMatchedGems()){
 				this.removedGems();
@@ -194,9 +199,9 @@ var BoardLayer = cc.Layer.extend({
 			var x2 = boardLocation[1].x;
 			var y2 = boardLocation[1].y;
 
-			this._action = Board.actionSwapGems(this._board, x1, y1, x2, y2);
+			this._action = m3g.BoardAction.actionSwapGems(this._board, x1, y1, x2, y2);
 
-			if(Board.isValidActionSwapGems(x1, y1, x2, y2)){
+			if(m3g.BoardAction.isValidActionSwapGems(x1, y1, x2, y2)){
 				var tempSprite1 = this.findSpriteWithBoardLocation(x1, y1);
 				var tempSprite2 = this.findSpriteWithBoardLocation(x2, y2);
 
@@ -232,11 +237,12 @@ var BoardLayer = cc.Layer.extend({
 		}
 	},
 	removedGems: function(){
-		var removedGems = Board.findAllMatchedGems(this._board);
-		Board.removeGemsWithList(this._board, removedGems);
+		var removedGems = m3g.BoardAction.findAllMatchedGemsWithCombo(this._board, 3, m3g.BoardAction.FIND_FILTER_GREATER_EQUAL);
+		var removeAction = m3g.BoardAction.actionRemoveGemsWithList(removedGems);
+		this._board.applyAction(removeAction);
 		for(var i = 0; i < removedGems.length; i++){
-			var x = removedGems[i].x;
-			var y = removedGems[i].y;
+			var x = removedGems[i].getX();
+			var y = removedGems[i].getY();
 
 			var sprite = this.findSpriteWithBoardLocation(x, y);
 
@@ -246,29 +252,41 @@ var BoardLayer = cc.Layer.extend({
 				sprite.runAction(cc.Sequence.create(action, action2));
 			}
 		}
+
+		this._gameManager.addScore(removedGems.length * this.GEM_SCORE);
 	},
 	makeGemsFall: function(){
-		var fallingGems = Board.makeGemsFall(this._board);
+		var fallAction = m3g.BoardAction.actionMakeGemsFall(this._board);
+		this._board.applyAction(fallAction);
+		var fallingGems = fallAction.getChanges();
 		for(var i = 0; i < fallingGems.length; i++){
-			var x = fallingGems[i].x;
-			var y = fallingGems[i].y;
-			var pos = this.convertBoardToCoordinate(fallingGems[i].toX, fallingGems[i].toY);
+			var fromX = fallingGems[i].getFromPoint().getX();
+			var fromY = fallingGems[i].getFromPoint().getY();
+			var toX = fallingGems[i].getToPoint().getX();
+			var toY = fallingGems[i].getToPoint().getY();
 
-			var sprite = this.findSpriteWithBoardLocation(x, y);
+			var pos = this.convertBoardToCoordinate(toX, toY);
+
+			var sprite = this.findSpriteWithBoardLocation(fromX, fromY);
 			sprite.setDestinationPosition(cc.p(pos.x, pos.y));
 			sprite.toggleGravityOn(true);			
 		}
 	},
 	filledGems: function(filledLocation){
-		var filledGems = Board.fillEmptyGems(this._board);
+		var fillAction = m3g.BoardAction.actionFillEmptyGems(this._board);
+		this._board.applyAction(fillAction);
+		var filledGems = fillAction.getChanges();
 		for(var i = 0; i < filledGems.length; i++){
-			var desPos = this.convertBoardToCoordinate(filledGems[i].x, filledGems[i].y);
-			var y = Math.abs(filledGems[i].y - this.BOARD_SIZE + 1);
+			var oriX = filledGems[i].getFromPoint().getX();
+			var oriY = filledGems[i].getFromPoint().getY();
+			var type = this._board.getBoardXY(oriX, oriY).getType();
+			var desPos = this.convertBoardToCoordinate(oriX, oriY);
+			var y = Math.abs(oriY - this.BOARD_SIZE + 1);
 
 			//start from the edge of top board
 			var posY = this._bg.getContentSize().height + GemSprite.getSpriteHeight() * y;
 
-			var sprite = GemSprite.createGemSprite(filledGems[i].type);
+			var sprite = GemSprite.createGemSprite(type);
 			sprite.setPosition(desPos.x, posY);
 			sprite.setDestinationPosition(cc.p(desPos.x, desPos.y));
 
@@ -277,7 +295,7 @@ var BoardLayer = cc.Layer.extend({
 		}
 	},
 	hasMatchedGems: function(){
-		var result = Board.findAllMatchedGems(this._board);
+		var result = m3g.BoardAction.findAllMatchedGemsWithCombo(this._board, 3, m3g.BoardAction.FIND_FILTER_GREATER_EQUAL);
 		return result.length > 0 ? true : false;
 	},
 	allGemsHaveLanded: function(){
@@ -308,6 +326,20 @@ var BoardLayer = cc.Layer.extend({
 			}
 		}
 		return true;
+	},
+	hint: function(){
+		var result = m3g.BoardAction.hint(this._board);
+
+		for(var i = 0; i < result.length; i++){
+			var x = result[i].getX();
+			var y = result[i].getY();
+
+			var sprite = this.findSpriteWithBoardLocation(x, y);
+			if(sprite && this.hasAnimationRunningDone(sprite)){
+				var action = cc.FadeOut.create(0.5);
+				sprite.runAction(cc.Sequence.create(action, action.reverse()));
+			}
+		}
 	},
 	//for debug
 	initDebugBoard: function(){

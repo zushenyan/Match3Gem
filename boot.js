@@ -13,12 +13,24 @@
         SingleEngineFile:'Cocos2d-html5-v2.1.5.min.js',
         appFiles:[
         	"res.js",
-            "source/Gem.js",
-            "source/Board.js",
+
+            "source/m3g/m3g.js",
+            "source/m3g/Point.js",
+            "source/m3g/Change.js",
+            "source/m3g/Gem.js",
+            "source/m3g/Board.js",
+            "source/m3g/ActionProcessor.js",
+            "source/m3g/Action.js",
+            "source/m3g/BoardAction.js",
+
+            "source/GameManager.js",
             "source/ControlController.js",
             "source/GemSprite.js",
-            "source/BoardLayer.js",
+            "source/GameLayer.js",
+            "source/HUDLayer.js",
+            "source/MenuLayer.js",
             "GameScene.js",
+            "MainScene.js",
         ]
     };
 

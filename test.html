@@ -5,58 +5,58 @@
 </head>
 <body>
 </body>
-<script src="source/Gem.js"></script>
-<script src="source/Board.js"></script>
+<script src="source/m3g/m3g.js"></script>
+<script src="source/m3g/Point.js"></script>
+<script src="source/m3g/Change.js"></script>
+<script src="source/m3g/Gem.js"></script>
+<script src="source/m3g/Board.js"></script>
+<script src="source/m3g/ActionProcessor.js"></script>
+<script src="source/m3g/Action.js"></script>
+<script src="source/m3g/BoardAction.js"></script>
 <script>
-	// function func3(a, b, c){
-	// 	for(var i = 0; i < arguments.length; i++){
-	// 		console.log(arguments[i]);
-	// 	}
-	// }
-
-	// function obj(){};
-
-	// obj.prototype.func = function() {
-		
+	// function BaseClass(){}
+	// BaseClass.prototype.foobar = function(str) {
+	// 	console.log(str);
 	// };
 
-	// obj.prototype.func2 = function() {
-		
+	// function SubClass(){}
+	// SubClass.prototype = new BaseClass();
+	// SubClass.prototype.constructor = SubClass;
+	// SubClass.prototype.foobar = function(str) {
+	// 	BaseClass.prototype.foobar.call(this, str);
+	// 	console.log("bbb");
 	// };
 
-	// obj.prototype.constructor = obj;
+	// new SubClass().foobar("ggyy");
 
+	var b = new m3g.Board();
 
-	// var arr1 = [1,2,3];
-	// var arr2 = arr1;
+	console.log(b.toStringBoard());
 
-	// arr2[1] = 5;
+	// console.log(Board.hasNoMoreMove(b));
+	console.log(m3g.BoardAction.hint(b));
 
-	// console.log(arr1);
+	// var r = Board.actionSwapGems(b,3,5,7,6);
+	// console.log(r);
+	// b.applyAction(r);
+	// b.printBoard();
 
+	// var r = Board.findMatchedGemsWithCombo(b, 4, 6, 4, Board.FIND_FILTER_EQUAL);
+	// console.log(r);
+	// Board.removeGemsWithList(b, r);
+	// b.printBoard();
 
-	var b = new Board();
+	// var r = Board.findAllMatchedGemsWithCombo(b, 3, Board.FIND_FILTER_GREATER_EQUAL);
+	// console.log(r);
+	// Board.removeGemsWithList(b, r);
+	// b.printBoard();
 
-	b.printBoard();
+	// r = Board.makeGemsFall(b);
+	// console.log(r);
+	// b.printBoard();
 
-	var r = Board.actionSwapGems(b,3,5,7,6);
-	console.log(r);
-	b.applyAction(r);
-
-	b.printBoard();
-
-	var r = Board.findAllMatchedGems(b);
-	console.log(r);
-	Board.removeGemsWithList(b, r);
-
-	b.printBoard();
-
-	r = Board.makeGemsFall(b);
-	console.log(r);
-	b.printBoard();
-
-	r = Board.fillEmptyGems(b);
-	console.log(r);
-	b.printBoard();
+	// r = Board.fillEmptyGems(b);
+	// console.log(r);
+	// b.printBoard();
 </script>
 </html>

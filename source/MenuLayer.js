@@ -41,7 +41,7 @@ var MenuLayer = cc.LayerColor.extend({
 	onHidden: function(){},
 
 	onPressedMainMenu: function(){
-
+		cc.Director.getInstance().replaceScene(new MainScene());
     },
     onPressedResume: function(){
     	this.setVisible(false);

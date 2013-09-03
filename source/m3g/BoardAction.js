@@ -2,7 +2,7 @@
 	In BoardAction class function 
 	prefix with "action" will return an Action class,
 	prefix with "find" will return an array of simple Point.
-	prefix with others will return return whatever type it will be.
+	prefix with others will return whatever type it wants to but will not be action.
 */
 m3g.BoardAction = (function(){
 	/*
@@ -242,100 +242,124 @@ m3g.BoardAction = (function(){
 	};
 
 	BoardAction.hint = function(board){
-	    var result = BoardAction.findAllMatchedGemsWithCombo(board, 2, BoardAction.FIND_FILTER_EQUAL);
+		var results = findHintWithMatrix(3, 2, board);
+		if(results){return results; }
 
-	    if(result.length === 0){
-	        return [];
-	    }
+		results = findHintWithMatrix(2, 3, board);
+		if(results){return results; }
 
-	    for(var i = 0; i < result.length; i++){
-	        var x = result[i].getX();
-	        var y = result[i].getY();
-	        var visitedGems = [];
+		results = findHintWithMatrix(4, 1, board);
+		if(results){return results; }
 
-	        findConnectedGems(board, x, y, board.getBoardXY(x, y).getType(), visitedGems);
+		results = findHintWithMatrix(1, 4, board);
+		if(results){return results; }
 
-	        var possibleMatchedGems = [];
-	        if(visitedGems.length === 2){
-	            var higherTopPoint = null;
-	            var lowerBottomPoint = null;
-	            var farerLeftPoint = null;
-	            var farerRightPoint = null;
+		return [];
 
-	            if(isHorizontalMatched(board, x, y)){
-	                farerLeftPoint   = getGemPosition(board, x, y, x - 2, y);
-	                farerRightPoint  = getGemPosition(board, x, y, x + 2, y);    
-	            }
-	            else{
-	                higherTopPoint   = getGemPosition(board, x, y, x, y - 2);
-	                lowerBottomPoint = getGemPosition(board, x, y, x, y + 2);
-	            }
-	            
-	            var rightBottomPoint = getGemPosition(board, x, y, x + 1, y + 1);
-	            var rightTopPoint    = getGemPosition(board, x, y, x + 1, y - 1);
-	            var leftBottomPoint  = getGemPosition(board, x, y, x - 1, y + 1);
-	            var leftTopPoint     = getGemPosition(board, x, y, x - 1, y - 1);
+		function findHintWithMatrix(width, height, board){
+			for(var y = 0; y <= m3g.Board.SIZE - height; y++){
+				for(var x = 0; x <= m3g.Board.SIZE - width; x++){
+					var matrix = getMatrix(x, y, width, height, board);
+					var points = comparePattern(matrix);
+					if(points){
+						var results = [];
+						for(var i = 0; i < points.length; i++){
+							var p = new m3g.Point(x + points[i].getX(), y + points[i].getY());
+							results.push(p);
+						}
+						return results;
+					}
+				}
+			}
+			return null;
+		}
 
-	            possibleMatchedGems = visitedGems.slice();
+		function getMatrix(startX, startY, width, height, board){
+			var endX = startX + width - 1;
+			var endY = startY + height - 1;
 
-	            if(higherTopPoint){         possibleMatchedGems.push(higherTopPoint); }
-	            else if(lowerBottomPoint){  possibleMatchedGems.push(lowerBottomPoint); }
-	            else if(farerRightPoint){   possibleMatchedGems.push(farerRightPoint); }
-	            else if(farerLeftPoint){    possibleMatchedGems.push(farerLeftPoint); }
-	            else if(rightBottomPoint){  possibleMatchedGems.push(rightBottomPoint); }
-	            else if(rightTopPoint){     possibleMatchedGems.push(rightTopPoint); }
-	            else if(leftBottomPoint){   possibleMatchedGems.push(leftBottomPoint); }
-	            else if(leftTopPoint){      possibleMatchedGems.push(leftTopPoint); }
-	        }
+			if(!board.isInBound(startX, startY) && !board.isInBound(endX, endY)){
+				throw new Error(startX + " " + startY + ", " + endX + " " + endY + " is not in bound!");
+			}
 
-	        if(possibleMatchedGems.length === 3){
-	            return possibleMatchedGems;
-	        }
-	    }
+			var matrix = new Array(height);
+			for(var i = 0; i < matrix.length; i++){
+				matrix[i] = new Array(width);
+			}
 
-	    return [];
+			for(var y = startY; y <= endY; y++){
+				for(var x = startX; x <= endX; x++){
+					matrix[y - startY][x - startX] = board.getBoardXY(x, y).getType();
+				}
+			}
 
-	    function findConnectedGems(board, x, y, gemType, visitedGems){
-	        if(!board.isInBound(x, y)){
-	            return;
-	        }
+			return matrix;
+		}
 
-	        if(board.getBoardXY(x, y).getType() !== gemType){
-	            return;
-	        }
+		/*
+			will return shift point if there is a match.
+			will return null if there matches none.
+		*/
+		function comparePattern(matrix){
+			// [row] x [column] matrix
+			// if it's a 2 x 3 matrix
+			if(matrix.length === 2 && matrix[0].length === 3){
+				/*
+					pattern like this
+					1 1 0	0 0 1	0 1 1	1 0 0 	1 0 1	0 1 0
+					0 0 1	1 1 0	1 0 0	0 1 1	0 1 0	1 0 1
+				*/
+				if(		compareWithNoEmpty(0, 0, 1, 0, 2, 1, matrix)){ return [new m3g.Point(0,0), new m3g.Point(1,0), new m3g.Point(2, 1)]; }
+				else if(compareWithNoEmpty(0, 1, 1, 1, 2, 0, matrix)){ return [new m3g.Point(0,1), new m3g.Point(1,1), new m3g.Point(2, 0)]; }
+				else if(compareWithNoEmpty(0, 1, 1, 0, 2, 0, matrix)){ return [new m3g.Point(0,1), new m3g.Point(1,0), new m3g.Point(2, 0)]; }
+				else if(compareWithNoEmpty(0, 0, 1, 1, 2, 1, matrix)){ return [new m3g.Point(0,0), new m3g.Point(1,1), new m3g.Point(2, 1)]; }
+				else if(compareWithNoEmpty(0, 0, 1, 1, 2, 0, matrix)){ return [new m3g.Point(0,0), new m3g.Point(1,1), new m3g.Point(2, 0)]; }
+				else if(compareWithNoEmpty(0, 1, 1, 0, 2, 1, matrix)){ return [new m3g.Point(0,1), new m3g.Point(1,0), new m3g.Point(2, 1)]; }
+			}
+			// if it's a 3 x 2 matrix
+			else if(matrix.length === 3 && matrix[0].length === 2){
+				/*
+					pattern like this
+					0 1		1 0		1 0		0 1		1 0		0 1
+					0 1		1 0 	0 1		1 0		0 1		1 0
+					1 0		0 1		0 1		1 0		1 0		0 1
+				*/
+				if(		compareWithNoEmpty(1, 0, 1, 1, 0, 2, matrix)){ return [new m3g.Point(1,0), new m3g.Point(1,1), new m3g.Point(0, 2)]; }
+				else if(compareWithNoEmpty(0, 0, 0, 1, 1, 2, matrix)){ return [new m3g.Point(0,0), new m3g.Point(0,1), new m3g.Point(1, 2)]; }
+				else if(compareWithNoEmpty(0, 0, 1, 1, 1, 2, matrix)){ return [new m3g.Point(0,0), new m3g.Point(1,1), new m3g.Point(1, 2)]; }
+				else if(compareWithNoEmpty(1, 0, 0, 1, 0, 2, matrix)){ return [new m3g.Point(1,0), new m3g.Point(0,1), new m3g.Point(0, 2)]; }
+				else if(compareWithNoEmpty(0, 0, 1, 1, 0, 2, matrix)){ return [new m3g.Point(0,0), new m3g.Point(1,1), new m3g.Point(0, 2)]; }
+				else if(compareWithNoEmpty(1, 0, 0, 1, 1, 2, matrix)){ return [new m3g.Point(1,0), new m3g.Point(0,1), new m3g.Point(1, 2)]; }
+			}
+			// if it's a 1 x 4 matrix
+			else if(matrix.length === 1 && matrix[0].length === 4){
+				/*
+					pattern like this
+					1 1 0 1		1 0 1 1
+				*/
+				if(		compareWithNoEmpty(0, 0, 1, 0, 3, 0, matrix)){ return [new m3g.Point(0,0), new m3g.Point(1,0), new m3g.Point(3, 0)];}
+				else if(compareWithNoEmpty(0, 0, 2, 0, 3, 0, matrix)){ return [new m3g.Point(0,0), new m3g.Point(2,0), new m3g.Point(3, 0)];}
+			}
+			// if it's a 4 x 1 matrix
+			else if(matrix.length === 4 && matrix[0].length === 1){
+				/*
+					pattern like this
+					1	1
+					1	0
+					0	1
+					1	1
+				*/
+				if(		compareWithNoEmpty(0, 0, 0, 1, 0, 3, matrix)){ return [new m3g.Point(0,0), new m3g.Point(0,1), new m3g.Point(0, 3)];}
+				else if(compareWithNoEmpty(0, 0, 0, 2, 0, 3, matrix)){ return [new m3g.Point(0,0), new m3g.Point(0,2), new m3g.Point(0, 3)];}
+			}
 
-	        for(var i = 0; i < visitedGems.length; i++){
-	            if((x === visitedGems[i].getX()) &&
-	                (y === visitedGems[i].getY())){
-	                return;
-	            }
-	        };
+			return null;
 
-	        visitedGems.push(new m3g.Point(x, y));
-
-	        findConnectedGems(board, x + 1, y, gemType, visitedGems);
-	        findConnectedGems(board, x - 1, y, gemType, visitedGems);
-	        findConnectedGems(board, x, y + 1, gemType, visitedGems);
-	        findConnectedGems(board, x, y - 1, gemType, visitedGems);
-	    }
-
-	    function isHorizontalMatched(board, x, y){
-	        if(!board.isInBound(x + 1, y) || !board.isInBound(x - 1, y)){
-	            return false;
-	        }
-	        if((board.getBoardXY(x, y).getType() === board.getBoardXY(x + 1, y).getType()) ||
-	            (board.getBoardXY(x, y).getType() === board.getBoardXY(x - 1, y).getType())){
-	            return true;
-	        }
-	        return false;
-	    }
-
-	    function getGemPosition(board, x1, y1, x2, y2){
-	        if(!board.isInBound(x2, y2)){
-	            return null;
-	        }
-	        return board.getBoardXY(x2, y2).getType() === board.getBoardXY(x1, y1).getType() ? new m3g.Point(x2, y2) : null;
-	    }
+			function compareWithNoEmpty(x1, y1, x2, y2, x3, y3, matrix){
+				if(matrix[y1][x1] === m3g.Gem.GEM_TYPE_EMPTY){return false; }
+				return matrix[y1][x1] === matrix[y2][x2] && matrix[y1][x1] === matrix[y3][x3];
+			}
+		}
 	};
 
 	BoardAction.cloneBoard = function(b){
@@ -353,7 +377,7 @@ m3g.BoardAction = (function(){
 	    }
 
 	    return board2;
-	}
+	};
 
 	return BoardAction;
 })();

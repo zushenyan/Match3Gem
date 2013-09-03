@@ -14,26 +14,11 @@
 <script src="source/m3g/Action.js"></script>
 <script src="source/m3g/BoardAction.js"></script>
 <script>
-	// function BaseClass(){}
-	// BaseClass.prototype.foobar = function(str) {
-	// 	console.log(str);
-	// };
-
-	// function SubClass(){}
-	// SubClass.prototype = new BaseClass();
-	// SubClass.prototype.constructor = SubClass;
-	// SubClass.prototype.foobar = function(str) {
-	// 	BaseClass.prototype.foobar.call(this, str);
-	// 	console.log("bbb");
-	// };
-
-	// new SubClass().foobar("ggyy");
-
 	var b = new m3g.Board();
 
 	console.log(b.toStringBoard());
 
-	// console.log(Board.hasNoMoreMove(b));
+	console.log(m3g.BoardAction.hasNoMoreMove(b));
 	console.log(m3g.BoardAction.hint(b));
 
 	// var r = Board.actionSwapGems(b,3,5,7,6);

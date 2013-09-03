@@ -9,7 +9,7 @@ var GameManager = (function(){
 
 	GameManager.prototype.updateTime = function(dt) {
 		this.setTimeLeft(this.getTimeLeft() - dt);
-		this.messageTimeUpdated();
+		this.message("onTimeUpdated", this.getTimeLeft());
 	};
 
 	GameManager.prototype.isGameOver = function() {
@@ -21,7 +21,7 @@ var GameManager = (function(){
 
 		if(this.getTimeLeft() <= 0){
 			this._isGameOver = true;
-			this.messageGameOver();
+			this.message("onGameOver");
 		}
 		else{
 			this._isGameOver = false;
@@ -34,7 +34,7 @@ var GameManager = (function(){
 
 	GameManager.prototype.setScore = function(score) {
 		this._score = score;
-		this.messageScore();
+		this.message("onScore", this.getScore());
 	};
 
 	GameManager.prototype.getScore = function() {
@@ -55,26 +55,10 @@ var GameManager = (function(){
 		this._listeners.push(listener);
 	};
 
-	GameManager.prototype.messageScore = function() {
-		for(var i = 0; i < this._listeners.length; i++){
-			if(this._listeners[i] && this._listeners[i].__proto__.hasOwnProperty("onScore")){
-				this._listeners[i].onScore(this.getScore());
-			}
-		}
-	};
-
-	GameManager.prototype.messageTimeUpdated = function() {
-		for(var i = 0; i < this._listeners.length; i++){
-			if(this._listeners[i] && this._listeners[i].__proto__.hasOwnProperty("onTimeUpdated")){
-				this._listeners[i].onTimeUpdated(this.getTimeLeft());
-			}
-		}
-	};
-
-	GameManager.prototype.messageGameOver = function() {
-		for(var i = 0; i < this._listeners.length; i++){
-			if(this._listeners[i] && this._listeners[i].__proto__.hasOwnProperty("onGameOver")){
-				this._listeners[i].onGameOver();
+	GameManager.prototype.message = function(name, args) {
+		for(index in this._listeners){
+			if(this._listeners[index] && (this._listeners[index])[name]){
+				(this._listeners[index])[name](args);
 			}
 		}
 	};

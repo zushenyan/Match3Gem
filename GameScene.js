@@ -2,7 +2,7 @@ var GameScene = cc.Scene.extend({
     ctor: function(){
         this._super();
 
-        var time = 10;
+        var time = 60;
         var gm = new GameManager(time, 0);
 
         var menuLayer = new MenuLayer();
@@ -18,6 +18,7 @@ var GameScene = cc.Scene.extend({
 
         menuLayer.onShowed = function(){
             hudLayer._hintMenu.setTouchEnabled(false);
+            gameLayer.setTouchEnabled(false);
 
             gameLayer.pauseSchedulerAndActions();
             var childs = gameLayer.getChildren();
@@ -28,6 +29,7 @@ var GameScene = cc.Scene.extend({
 
         menuLayer.onHidden = function(){
             hudLayer._hintMenu.setTouchEnabled(true);
+            gameLayer.setTouchEnabled(true);
 
             gameLayer.resumeSchedulerAndActions();
             var childs = gameLayer.getChildren();

@@ -26,12 +26,15 @@ var GameLayer = cc.Layer.extend({
 
 		this._gameManager = gm;
 
-		this.initBackground();
-		this.initGemSprites();
 		this.initDestinationPositionBoard();
-		this.initSpritesPositionAndDestination();
+		this.initBackground();
 		this.initControlController();
-		// this.initDebugBoard();
+		this.initDebugBoard();
+
+		
+		this.initGemSprites();
+		this.initSpritesPositionAndDestination();
+		
 	},
 	onEnter: function(){
 		this._super();
@@ -155,6 +158,16 @@ var GameLayer = cc.Layer.extend({
 		}
 		return null;
 	},
+	generateNewBoard: function(){
+		//clear all gem sprites
+		for(var i = 0; i < this._gemSprites.length; i++){
+			this.removeChild(this._gemSprites[i], true);
+		}
+
+		this._board.generateBoard();
+		this.initGemSprites();
+		this.initSpritesPositionAndDestination();
+	},
 
 
 
@@ -180,12 +193,17 @@ var GameLayer = cc.Layer.extend({
 				this.filledGems();
 				this._mouseSuspended = true;
 			}
+			else if(m3g.BoardAction.hasNoMoreMove(this._board)){
+				console.log(this._board.toStringBoard());
+				this.playNoMoreMoveAnimation();
+				this.generateNewBoard();
+			}
 		}
 
 		//update all gems position
 		this.updateAllGemSpritesPosition(dt);
 
-		// this.updateDebugBoard();
+		this.updateDebugBoard();
 	},
 	swapGem: function(){
 		if(this._mouseSuspended){
@@ -327,6 +345,23 @@ var GameLayer = cc.Layer.extend({
 		}
 		return true;
 	},
+	playNoMoreMoveAnimation: function(){
+		var size = cc.Director.getInstance().getWinSize();
+		var me = this;
+
+		//play has no more move animation
+		var label = cc.LabelTTF.create("No More Move", "", 64, cc.size(size.width, 64), cc.TEXT_ALIGNMENT_CENTER);
+		label.setAnchorPoint(cc.p(0,0));
+		label.setPosition(cc.p(0, (size.height - label.getContentSize().height) / 2));
+		this.addChild(label, 10);
+
+		var action = cc.FadeOut.create(2);
+		var action2 = cc.CallFunc.create(function(){
+			me.removeChild(label);
+		}, this);
+		
+		label.runAction(cc.Sequence.create(action, action2));
+	},
 	hint: function(){
 		var result = m3g.BoardAction.hint(this._board);
 
@@ -341,6 +376,9 @@ var GameLayer = cc.Layer.extend({
 			}
 		}
 	},
+
+
+
 	//for debug
 	initDebugBoard: function(){
 		this._labels = new Array(this.BOARD_SIZE);
@@ -350,12 +388,12 @@ var GameLayer = cc.Layer.extend({
 		}
 
 		var board = this._board.getBoard();
-		var size = this._gemSprites[0].getContentSize();
 		for(var y = board.length - 1, arrY = 0; y >= 0 ; y--, arrY++){
 			for(var x = 0; x < board[y].length; x++){
+				var size = cc.size(GemSprite.getSpriteWidth(), GemSprite.getSpriteHeight());
 				var px = size.width * x;
 				var py = size.height * y;
-
+				
 				var label = cc.LabelTTF.create(board[arrY][x].getType(), "", 32, size, cc.TEXT_ALIGNMENT_CENTER);
 				label.setColor(cc.c3b(150,150,150));
 				label.setPosition(cc.p(px, py));

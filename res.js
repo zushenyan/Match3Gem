@@ -15,6 +15,10 @@ var s_gem_5 = "resources/gem_5.png";
 var s_gem_6 = "resources/gem_6.png";
 var s_gem_7 = "resources/gem_7.png";
 
+var s_sound_button_pressed = "resources/button_pressed.wav";
+var s_sound_gem_fall = "resources/gem_fall.wav";
+var s_sound_gem_matched = "resources/gem_matched.wav";
+
 var g_resources = [
 	{src:s_boardBackground},
 
@@ -31,5 +35,9 @@ var g_resources = [
 	{src:s_progress_bar_empty},
 
 	{src:s_pause_button},
-	{src:s_hint_button}
+	{src:s_hint_button},
+
+	{type:"effect", src:s_sound_button_pressed},
+	{type:"effect", src:s_sound_gem_fall},
+	{type:"effect", src:s_sound_gem_matched},
 ];

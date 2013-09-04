@@ -49,6 +49,8 @@ var GemSprite = cc.Sprite.extend({
 				this.setPositionY(this._destinationPosition.y);
 				this.toggleGravityOn(false);
 				this._hasLanded = true;
+
+				cc.AudioEngine.getInstance().playEffect(s_sound_gem_fall);
 			}
 			else{
 				this.setPositionY(this.getPositionY() + this._velocity.y * dt);

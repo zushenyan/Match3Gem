@@ -41,9 +41,11 @@ var MenuLayer = cc.LayerColor.extend({
 	onHidden: function(){},
 
 	onPressedMainMenu: function(){
+		cc.AudioEngine.getInstance().playEffect(s_sound_button_pressed);
 		cc.Director.getInstance().replaceScene(new MainScene());
     },
     onPressedResume: function(){
+    	cc.AudioEngine.getInstance().playEffect(s_sound_button_pressed);
     	this.setVisible(false);
     }
 });

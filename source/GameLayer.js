@@ -31,17 +31,17 @@ var GameLayer = cc.Layer.extend({
 		this.initControlController();
 		this.initDebugBoard();
 
-		
 		this.initGemSprites();
 		this.initSpritesPositionAndDestination();
 		
+		this.setTouchEnabled(true);
+		this.schedule(this.update, 0);
+
+		this.playIntro();
 	},
 	onEnter: function(){
 		this._super();
-		this.setTouchEnabled(true);
-
-		this.schedule(this.update, 0);
-
+		
 		return true;
 	},
 
@@ -173,6 +173,7 @@ var GameLayer = cc.Layer.extend({
 
 	update: function(dt){
 		if(this._gameManager.isGameOver()){
+			this.playOutro();
 			return;
 		}
 
@@ -268,10 +269,14 @@ var GameLayer = cc.Layer.extend({
 				var action = cc.FadeOut.create(0.25);
 				var action2 = cc.CallFunc.create(this.onRemoveFromParent, this);
 				sprite.runAction(cc.Sequence.create(action, action2));
+
+				cc.AudioEngine.getInstance().playEffect(s_sound_gem_matched);
 			}
 		}
 
 		this._gameManager.addScore(removedGems.length * this.GEM_SCORE);
+
+
 	},
 	makeGemsFall: function(){
 		var fallAction = m3g.BoardAction.actionMakeGemsFall(this._board);
@@ -375,6 +380,44 @@ var GameLayer = cc.Layer.extend({
 				sprite.runAction(cc.Sequence.create(action, action.reverse()));
 			}
 		}
+	},
+	playIntro: function(){
+		var size = cc.Director.getInstance().getWinSize();
+		var me = this;
+
+		var label = cc.LabelTTF.create("Go", "", 64, cc.size(128, 64), cc.TEXT_ALIGNMENT_CENTER);
+		label.setAnchorPoint(cc.p(0,0));
+		label.setPosition(cc.p(
+			(size.width - label.getContentSize().width) / 2, 
+			(size.height - label.getContentSize().height) / 2));
+		this.addChild(label, 10);
+
+		var delay = cc.DelayTime.create(1);
+		var action = cc.ScaleTo.create(2, 0);
+		var action2 = cc.CallFunc.create(function(){
+			me.removeChild(label);
+		}, this);
+		
+		label.runAction(cc.Sequence.create(delay, action, action2));
+	},
+	playOutro: function(){
+		var size = cc.Director.getInstance().getWinSize();
+		var me = this;
+
+		var label = cc.LabelTTF.create("Time is up", "", 64, cc.size(size.width, 64), cc.TEXT_ALIGNMENT_CENTER);
+		label.setAnchorPoint(cc.p(0,0));
+		label.setPosition(cc.p(
+			(size.width - label.getContentSize().width) / 2, 
+			(size.height - label.getContentSize().height) / 2));
+		this.addChild(label, 10);
+
+		var delay = cc.DelayTime.create(2);
+		var action2 = cc.CallFunc.create(function(){
+			me.removeChild(label);
+			cc.Director.getInstance().replaceScene(new MainScene());
+		}, this);
+		
+		label.runAction(cc.Sequence.create(delay, action2));
 	},
 
 

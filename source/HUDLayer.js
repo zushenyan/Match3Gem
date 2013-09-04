@@ -24,8 +24,8 @@ var HUDLayer = cc.LayerColor.extend({
 
         var PADDING = 8;
 
-        this._pauseButton = cc.MenuItemImage.create(s_pause_button, s_pause_button, this.pause, this);
-        this._hintButton = cc.MenuItemImage.create(s_hint_button, s_hint_button, this.hint, this);
+        this._pauseButton = cc.MenuItemImage.create(s_pause_button, s_pause_button, this.onPressedPause, this);
+        this._hintButton = cc.MenuItemImage.create(s_hint_button, s_hint_button, this.onPressedHint, this);
 
         this._pauseButton.setAnchorPoint(cc.p(0,0));
         this._hintButton.setAnchorPoint(cc.p(0,0));
@@ -68,10 +68,12 @@ var HUDLayer = cc.LayerColor.extend({
 
 
 
-    pause: function(){
+    onPressedPause: function(){
+    	cc.AudioEngine.getInstance().playEffect(s_sound_button_pressed);
     	this._menuLayer.setVisible(true);
     },
-    hint: function(){
+    onPressedHint: function(){
+    	cc.AudioEngine.getInstance().playEffect(s_sound_button_pressed);
     	this._gameLayer.hint();
     },
 

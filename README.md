@@ -17,7 +17,9 @@ How to Run
 How to Play
 ===
 Get as many scores as you can in 60 seconds.
+
 Pause icon for pause.
+
 Hint icon for hint.
 
 Change Log

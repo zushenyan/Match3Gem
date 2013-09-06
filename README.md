@@ -8,6 +8,8 @@ The latest version of Chrome, Safari, Firefox and Opera.
 
 Cocos2d-html5-v2.1.5 seems not fully support IE 10 at this moment.
 
+Does not support mobile browsers.
+
 How to Run
 ===
 * Web - you can play it online [here](http://zushenyan.github.io/Match3Gem/).

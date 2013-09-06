@@ -26,7 +26,7 @@ Hint icon for hint.
 
 Change Log
 ===
-* ver 0.5 (2013/9/6) - The first stable version. Fixed many bugs ,still have many workarounds and bad codes. v_v
+* ver 0.5 (2013/9/6) - The first stable version. Fixed many bugs ,still has many workarounds and bad codes. v_v
 * ver 0.4 (2013/9/4) - A very first playable version released. It should be runnable on Chrome and still needs further check on other platforms.
 
 Author

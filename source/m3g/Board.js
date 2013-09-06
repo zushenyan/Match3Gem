@@ -7,8 +7,8 @@ m3g.Board = (function(){
 		this._board = null;
 
 		this.initBoard();
-		// this.generateBoard();
-		this.generateSampleBoard();
+		this.generateBoard();
+		// this.generateSampleBoard();
 	};
 
 	Board.prototype.initBoard = function() {

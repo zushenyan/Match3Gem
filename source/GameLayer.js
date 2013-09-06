@@ -29,7 +29,7 @@ var GameLayer = cc.Layer.extend({
 		this.initDestinationPositionBoard();
 		this.initBackground();
 		this.initControlController();
-		this.initDebugBoard();
+		// this.initDebugBoard();
 
 		this.initGemSprites();
 		this.initSpritesPositionAndDestination();
@@ -172,11 +172,6 @@ var GameLayer = cc.Layer.extend({
 
 
 	update: function(dt){
-		if(this._gameManager.isGameOver()){
-			this.playOutro();
-			return;
-		}
-
 		this._gameManager.updateTime(dt);
 
 		if(this.allGemsHaveLanded()){
@@ -187,24 +182,31 @@ var GameLayer = cc.Layer.extend({
 				this._switchedSprite2 = null;
 				// this._action = new Action();
 			}
-			this._mouseSuspended = false;
+			
 			if(this.hasMatchedGems()){
 				this.removedGems();
 				this.makeGemsFall();
 				this.filledGems();
 				this._mouseSuspended = true;
 			}
+			else if(this._gameManager.isGameOver()){
+				this.playOutro();
+				this._mouseSuspended = true;
+			}
 			else if(m3g.BoardAction.hasNoMoreMove(this._board)){
-				console.log(this._board.toStringBoard());
+				// console.log(this._board.toStringBoard());
 				this.playNoMoreMoveAnimation();
 				this.generateNewBoard();
+			}
+			else{
+				this._mouseSuspended = false;
 			}
 		}
 
 		//update all gems position
 		this.updateAllGemSpritesPosition(dt);
 
-		this.updateDebugBoard();
+		// this.updateDebugBoard();
 	},
 	swapGem: function(){
 		if(this._mouseSuspended){
@@ -419,7 +421,6 @@ var GameLayer = cc.Layer.extend({
 		
 		label.runAction(cc.Sequence.create(delay, action2));
 	},
-
 
 
 	//for debug

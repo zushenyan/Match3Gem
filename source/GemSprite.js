@@ -8,7 +8,7 @@ var GemSprite = cc.Sprite.extend({
 	ctor: function(){
 		this._super();
 
-		this._velocityMode = GemSprite.VELOCITY_MODE_CONSTANT;
+		this.setVelocityMode(GemSprite.VELOCITY_MODE_ACCELERATION);
 		this._velocity = cc.p(0, 0);
 		this.toggleGravityOn(true);
 		this._destinationPosition = cc.p(this.getPositionX(), this.getPositionY());
@@ -36,7 +36,7 @@ var GemSprite = cc.Sprite.extend({
 			this._velocity.y = -300;
 		}
 		else if(this._velocityMode === GemSprite.VELOCITY_MODE_ACCELERATION){
-			this._velocity.y -= 10;
+			this._velocity.y -= 20;
 		}
 	},
 	resetVelocity: function(){
@@ -47,6 +47,7 @@ var GemSprite = cc.Sprite.extend({
 		if(this.isGravityOn()){
 			if(this.getPositionY() <= this._destinationPosition.y){
 				this.setPositionY(this._destinationPosition.y);
+				this.resetVelocity();
 				this.toggleGravityOn(false);
 				this._hasLanded = true;
 
@@ -82,9 +83,11 @@ GemSprite.createGemSprite = function(gemType){
 };
 
 GemSprite.getSpriteWidth = function(){
-	return cc.TextureCache.getInstance().textureForKey(GemSprite.GEM_TYPE[0]).getContentSize().width * GemSprite.SCALE;
+	return 64 * GemSprite.SCALE;
+	// return cc.TextureCache.getInstance().textureForKey(GemSprite.GEM_TYPE[0]).getContentSize().width * GemSprite.SCALE;
 };
 
 GemSprite.getSpriteHeight = function(){
-	return cc.TextureCache.getInstance().textureForKey(GemSprite.GEM_TYPE[0]).getContentSize().height * GemSprite.SCALE;
+	return 64 * GemSprite.SCALE;
+	// return cc.TextureCache.getInstance().textureForKey(GemSprite.GEM_TYPE[0]).getContentSize().height * GemSprite.SCALE;
 };

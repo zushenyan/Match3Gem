@@ -4,7 +4,9 @@ A match-3 simple puzzle game aims for practice of JavaScript & Cocos2d-HTML5.
 
 Support Platforms
 ===
-The latest version of Chrome, Safari, Firefox and Opera.
+~~The latest version of Chrome, Safari, Firefox and Opera.~~
+
+For some unkown reasons Cocos2d-html5 seems not to work properly on Chrome and Opera. It works on Safari, but has performance issue. On Firefox it works well.
 
 Cocos2d-html5-v2.1.5 seems not fully support IE 10 at this moment.
 

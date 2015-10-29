@@ -6,11 +6,13 @@ Support Platforms
 ===
 ~~The latest version of Chrome, Safari, Firefox and Opera.~~
 
-For some unkown reasons Cocos2d-html5 seems not to work properly on Chrome and Opera. It works on Safari, but has performance issue. On Firefox it works well.
+~~For some unknown reasons Cocos2d-html5 seems not to work properly on Chrome and Opera. It works on Safari, but has performance issue. On Firefox it works well.~~
 
-Cocos2d-html5-v2.1.5 seems not fully support IE 10 at this moment.
+~~Cocos2d-html5-v2.1.5 seems not fully support IE 10 at this moment.~~
 
-Does not support mobile browsers.
+~~Does not support mobile browsers.~~
+
+It seems newer versions of browser have disabled some experimental features and since Cocos2d-html5 used some experimental browser features, this game won't work anymore. Although upgrading to 2.2.3 can bring it live again, some behaviors in 2.2.3 have changed, which may lead to some unexpected results.
 
 How to Run
 ===

@@ -14,7 +14,7 @@ let BoardUtils = {
 		resultList = (rightList.length >= 3) ? resultList.concat(rightList) : resultList;
 		resultList = (downList.length >= 3) ? resultList.concat(downList) : resultList;
 
-		return BoardUtils.removeMatchedDuplicates(resultList);
+		return BoardUtils._removeMatchedDuplicates(resultList);
 
 		function walkDirection(board, x, y, type, direction, matchedList){
 			if(!isValidDirection(board, x, y, type)){ return; }
@@ -38,37 +38,37 @@ let BoardUtils = {
 				resultList = resultList.concat(result);
 			}
 		}
-		return BoardUtils.removeMatchedDuplicates(resultList);
-	},
-
-	removeMatchedDuplicates: function(list){
-		let resultList = [];
-		for(let i = 0; i < list.length; i++){
-			let hasOne = resultList.find((ele) => {
-				if(list[i].x === ele.x && list[i].y === ele.y && list[i].type === ele.type){
-					return true;
-				}
-			});
-			if(!hasOne){ resultList.push(list[i]); }
-		}
-		return resultList;
+		return BoardUtils._removeMatchedDuplicates(resultList);
 	},
 
 	testSwap: function(board, sourceX, sourceY, targetX, targetY){
 		if(!(Matrix.isInBound(board, sourceX, sourceY) && Matrix.isInBound(board, targetX, targetY))){ return false; }
 		let cloneBoard = BoardUtils.cloneBoard(board);
-		BoardUtils.swapHelpper(cloneBoard, sourceX, sourceY, targetX, targetY);
+		BoardUtils._swapHelpper(cloneBoard, sourceX, sourceY, targetX, targetY);
 		let result = BoardUtils.findMatchedAll(cloneBoard);
 		return result.length >= 3 ? result : false;
 	},
 
 	swap: function(board, sourceX, sourceY, targetX, targetY){
 		let result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY);
-		if(result){ BoardUtils.swapHelpper(board, sourceX, sourceY, targetX, targetY); }
+		if(result){ BoardUtils._swapHelpper(board, sourceX, sourceY, targetX, targetY); }
 		return result;
 	},
 
 	hasPossibleMatch: function(board){
+		let patterns = BoardUtils._generatePatterns();
+		let resultList = [];
+
+		for(let y = 0; y < board.length; y++){
+			for(let x = 0; x < board[y].length; x++){
+				for(let i = 0; i < patterns.length; i++){
+					let result = Pattern.comparePattern(board, x, y, patterns[i].pattern, patterns[i].anchorX, patterns[i].anchorY);
+					if(result){ resultList = resultList.concat(result); }
+				}
+			}
+		}
+		resultList = BoardUtils._removeMatchedDuplicates(resultList);
+		return resultList;
 	},
 
 	/**
@@ -118,7 +118,20 @@ let BoardUtils = {
 		console.log(matchedOutput);
 	},
 
-	swapHelpper: function(board, sourceX, sourceY, targetX, targetY){
+	_removeMatchedDuplicates: function(list){
+		let resultList = [];
+		for(let i = 0; i < list.length; i++){
+			let hasOne = resultList.find((ele) => {
+				if(list[i].x === ele.x && list[i].y === ele.y && list[i].type === ele.type){
+					return true;
+				}
+			});
+			if(!hasOne){ resultList.push(list[i]); }
+		}
+		return resultList;
+	},
+
+	_swapHelpper: function(board, sourceX, sourceY, targetX, targetY){
 		let temp = board[targetY][targetX];
 		board[targetY][targetX] = board[sourceY][sourceX];
 		board[sourceY][sourceX] = temp;
@@ -126,6 +139,39 @@ let BoardUtils = {
 			source: {x: sourceX, y: sourceY, type: board[sourceY][sourceX]},
 			target: {x: targetX, y: targetY, type: board[targetY][targetX]}
 		}
+	},
+
+	_generatePatterns: function(){
+		let horizontalPattern1 = [
+			[1,1,0],
+			[0,0,1]
+		];
+		let horizontalPattern2 = [
+			[1,0,0],
+			[0,1,1]
+		];
+		let horizontalPattern3 = [
+			[1,0,1],
+			[0,1,0]
+		];
+		let verticalPattern1 = Matrix.transpose(horizontalPattern1);
+		let verticalPattern2 = Matrix.transpose(horizontalPattern2);
+		let verticalPattern3 = Matrix.transpose(horizontalPattern3);
+
+		return [
+			{pattern: horizontalPattern1, anchorX: 0, anchorY: 0},
+			{pattern: horizontalPattern1, anchorX: 0, anchorY: 1},
+			{pattern: horizontalPattern2, anchorX: 0, anchorY: 0},
+			{pattern: horizontalPattern2, anchorX: 0, anchorY: 1},
+			{pattern: horizontalPattern3, anchorX: 0, anchorY: 0},
+			{pattern: horizontalPattern3, anchorX: 0, anchorY: 1},
+			{pattern: verticalPattern1, anchorX: 0, anchorY: 0},
+			{pattern: verticalPattern1, anchorX: 1, anchorY: 0},
+			{pattern: verticalPattern2, anchorX: 0, anchorY: 0},
+			{pattern: verticalPattern2, anchorX: 1, anchorY: 0},
+			{pattern: verticalPattern3, anchorX: 0, anchorY: 0},
+			{pattern: verticalPattern3, anchorX: 1, anchorY: 0},
+		];
 	},
 
 	VISITED: 2,

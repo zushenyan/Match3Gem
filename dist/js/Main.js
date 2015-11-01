@@ -53,7 +53,7 @@ var BoardUtils = {
 		resultList = rightList.length >= 3 ? resultList.concat(rightList) : resultList;
 		resultList = downList.length >= 3 ? resultList.concat(downList) : resultList;
 
-		return BoardUtils.removeMatchedDuplicates(resultList);
+		return BoardUtils._removeMatchedDuplicates(resultList);
 
 		function walkDirection(board, x, y, type, direction, matchedList) {
 			if (!isValidDirection(board, x, y, type)) {
@@ -81,27 +81,7 @@ var BoardUtils = {
 				resultList = resultList.concat(result);
 			}
 		}
-		return BoardUtils.removeMatchedDuplicates(resultList);
-	},
-
-	removeMatchedDuplicates: function removeMatchedDuplicates(list) {
-		var resultList = [];
-
-		var _loop = function (i) {
-			var hasOne = resultList.find(function (ele) {
-				if (list[i].x === ele.x && list[i].y === ele.y && list[i].type === ele.type) {
-					return true;
-				}
-			});
-			if (!hasOne) {
-				resultList.push(list[i]);
-			}
-		};
-
-		for (var i = 0; i < list.length; i++) {
-			_loop(i);
-		}
-		return resultList;
+		return BoardUtils._removeMatchedDuplicates(resultList);
 	},
 
 	testSwap: function testSwap(board, sourceX, sourceY, targetX, targetY) {
@@ -109,7 +89,7 @@ var BoardUtils = {
 			return false;
 		}
 		var cloneBoard = BoardUtils.cloneBoard(board);
-		BoardUtils.swapHelpper(cloneBoard, sourceX, sourceY, targetX, targetY);
+		BoardUtils._swapHelpper(cloneBoard, sourceX, sourceY, targetX, targetY);
 		var result = BoardUtils.findMatchedAll(cloneBoard);
 		return result.length >= 3 ? result : false;
 	},
@@ -117,12 +97,28 @@ var BoardUtils = {
 	swap: function swap(board, sourceX, sourceY, targetX, targetY) {
 		var result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY);
 		if (result) {
-			BoardUtils.swapHelpper(board, sourceX, sourceY, targetX, targetY);
+			BoardUtils._swapHelpper(board, sourceX, sourceY, targetX, targetY);
 		}
 		return result;
 	},
 
-	hasPossibleMatch: function hasPossibleMatch(board) {},
+	hasPossibleMatch: function hasPossibleMatch(board) {
+		var patterns = BoardUtils._generatePatterns();
+		var resultList = [];
+
+		for (var y = 0; y < board.length; y++) {
+			for (var x = 0; x < board[y].length; x++) {
+				for (var i = 0; i < patterns.length; i++) {
+					var result = _Pattern2["default"].comparePattern(board, x, y, patterns[i].pattern, patterns[i].anchorX, patterns[i].anchorY);
+					if (result) {
+						resultList = resultList.concat(result);
+					}
+				}
+			}
+		}
+		resultList = BoardUtils._removeMatchedDuplicates(resultList);
+		return resultList;
+	},
 
 	/**
  	@arg {array} board - 2d array.
@@ -152,8 +148,8 @@ var BoardUtils = {
 		var boardOutput = "";
 		var matchedOutput = "";
 
-		var _loop2 = function (y) {
-			var _loop3 = function (x) {
+		var _loop = function (y) {
+			var _loop2 = function (x) {
 				boardOutput += board[y][x] + ", ";
 
 				var index = matchedResult.findIndex(function (ele, index, arr) {
@@ -165,14 +161,14 @@ var BoardUtils = {
 			};
 
 			for (var x = 0; x < board[y].length; x++) {
-				_loop3(x);
+				_loop2(x);
 			}
 			boardOutput += "\n";
 			matchedOutput += "\n";
 		};
 
 		for (var y = 0; y < board.length; y++) {
-			_loop2(y);
+			_loop(y);
 		}
 
 		console.log("board:");
@@ -181,7 +177,27 @@ var BoardUtils = {
 		console.log(matchedOutput);
 	},
 
-	swapHelpper: function swapHelpper(board, sourceX, sourceY, targetX, targetY) {
+	_removeMatchedDuplicates: function _removeMatchedDuplicates(list) {
+		var resultList = [];
+
+		var _loop3 = function (i) {
+			var hasOne = resultList.find(function (ele) {
+				if (list[i].x === ele.x && list[i].y === ele.y && list[i].type === ele.type) {
+					return true;
+				}
+			});
+			if (!hasOne) {
+				resultList.push(list[i]);
+			}
+		};
+
+		for (var i = 0; i < list.length; i++) {
+			_loop3(i);
+		}
+		return resultList;
+	},
+
+	_swapHelpper: function _swapHelpper(board, sourceX, sourceY, targetX, targetY) {
 		var temp = board[targetY][targetX];
 		board[targetY][targetX] = board[sourceY][sourceX];
 		board[sourceY][sourceX] = temp;
@@ -189,6 +205,17 @@ var BoardUtils = {
 			source: { x: sourceX, y: sourceY, type: board[sourceY][sourceX] },
 			target: { x: targetX, y: targetY, type: board[targetY][targetX] }
 		};
+	},
+
+	_generatePatterns: function _generatePatterns() {
+		var horizontalPattern1 = [[1, 1, 0], [0, 0, 1]];
+		var horizontalPattern2 = [[1, 0, 0], [0, 1, 1]];
+		var horizontalPattern3 = [[1, 0, 1], [0, 1, 0]];
+		var verticalPattern1 = _Matrix2["default"].transpose(horizontalPattern1);
+		var verticalPattern2 = _Matrix2["default"].transpose(horizontalPattern2);
+		var verticalPattern3 = _Matrix2["default"].transpose(horizontalPattern3);
+
+		return [{ pattern: horizontalPattern1, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern1, anchorX: 0, anchorY: 1 }, { pattern: horizontalPattern2, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern2, anchorX: 0, anchorY: 1 }, { pattern: horizontalPattern3, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern3, anchorX: 0, anchorY: 1 }, { pattern: verticalPattern1, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern1, anchorX: 1, anchorY: 0 }, { pattern: verticalPattern2, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern2, anchorX: 1, anchorY: 0 }, { pattern: verticalPattern3, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern3, anchorX: 1, anchorY: 0 }];
 	},
 
 	VISITED: 2,

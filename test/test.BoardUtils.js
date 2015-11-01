@@ -14,12 +14,12 @@ var sampleBoard = [
 
 var sampleBoard2 = [
 	[1,2,3,4,5,6,7,8],
-	[8,7,6,5,4,3,2,1],
+	[8,7,6,2,1,3,2,1],
 	[1,2,3,4,5,6,7,8],
-	[8,7,6,5,4,3,2,1],
-	[1,2,3,4,5,6,7,8],
-	[8,7,6,5,4,3,2,1],
-	[1,2,3,4,5,6,7,8],
+	[8,7,6,5,1,3,2,1],
+	[1,2,3,4,2,6,7,8],
+	[8,7,6,5,1,3,2,1],
+	[1,2,3,4,2,6,7,8],
 	[8,7,6,5,4,3,2,1]
 ];
 
@@ -58,7 +58,7 @@ describe("BoardUtils", function(){
 
 	describe("removeMatchedDuplicates", function(){
 		it("should work as intention", function(){
-			var dup2 = bu.removeMatchedDuplicates(dup);
+			var dup2 = bu._removeMatchedDuplicates(dup);
 			expect(dup2).to.have.length(1);
 		});
 	});
@@ -102,6 +102,17 @@ describe("BoardUtils", function(){
 			var clone = bu.cloneBoard(sampleBoard3);
 			var result = bu.swap(clone, 1, 4, 0, 4);
 			expect(clone).to.not.eql(sampleBoard3);
+		});
+	});
+
+	describe("hasPossibleMatch", function(){
+		it("should work as intention", function(){
+			var result1 = bu.hasPossibleMatch(sampleBoard2);
+			var result2 = bu.hasPossibleMatch(sampleBoard3);
+			var result3 = bu.hasPossibleMatch(sampleBoard);
+			expect(result1).to.have.length(0);
+			expect(result2).to.have.length(19);
+			expect(result3).to.have.length(22);
 		});
 	});
 });

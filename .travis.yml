@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+- "4.1"
+before_script:
+- npm install -g source-map-support
+- npm install -g mocha
+script:
+- mocha --require source-map-support/register test

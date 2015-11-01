@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>BoardUtils</title>
+	</head>
+	<body>
+		<script src="../../dist/js/Main.js"></script>
+		<script>
+			var sampleBoard = [
+				[2,3,4,5,6,7,8,9],
+				[3,3,4,5,2,1,1,2],
+				[1,3,1,2,2,1,1,6],
+				[1,1,4,3,2,6,6,6],
+				[2,3,7,8,2,5,6,7],
+				[8,8,8,8,8,2,1,1],
+				[8,7,6,5,4,3,3,2],
+				[1,3,5,7,9,2,4,6]
+			];
+			var result = m3g.BoardUtils.traverse(sampleBoard, 3, 5);
+			console.log(result);
+			console.log(JSON.stringify(result));
+			console.log(JSON.stringify(result, null, " "));
+
+			var a = [1,[2,3,[4,5]]];
+			var b = [6,7,8];
+			console.log(a.concat(b));
+		</script>
+	</body>
+</html>

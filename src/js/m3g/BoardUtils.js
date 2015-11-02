@@ -2,6 +2,18 @@ import Matrix from "./Matrix";
 import Pattern from "./Pattern";
 
 let BoardUtils = {
+	/**
+		find same type of a element with given point on board.
+		@arg {array} board - 2d array.
+		@arg {number} startX - startX.
+		@arg {number} startY - startY.
+		@return {object} - will return a list of matched elements, like following example: (will return an empty array if not found)
+			[
+			{x: 1, y: 3, type: type},
+			{x: x, y: y, type: type},
+			...
+			]
+	*/
 	findMatched: function(board, startX, startY){
 		let targetType = board[startY][startX];
 		let rightList = [];
@@ -30,6 +42,16 @@ let BoardUtils = {
 		}
 	},
 
+	/**
+		find same type of all elements with given board.
+		@arg {array} board - 2d array.
+		@return {object} - will return a list of matched elements, like following example: (will return an empty array if not found)
+			[
+			{x: 1, y: 3, type: type},
+			{x: x, y: y, type: type},
+			...
+			]
+	*/
 	findMatchedAll: function(board){
 		let resultList = [];
 		for(let y = 0; y < board.length; y++){
@@ -41,21 +63,38 @@ let BoardUtils = {
 		return BoardUtils._removeMatchedDuplicates(resultList);
 	},
 
+	/**
+		test if it's a successful swap with given points. Won't modify the original board.
+		@arg {array} board - 2d array.
+		@arg {number} sourceX - sourceX.
+		@arg {number} sourceY - sourceY.
+		@arg {number} targetX - targetX.
+		@arg {number} targetY - targetY.
+		@return {array, boolean} - will return an list of matched elements. Only returns array with 3+ elements on success or false on failure.
+	*/
 	testSwap: function(board, sourceX, sourceY, targetX, targetY){
 		if(!(Matrix.isInBound(board, sourceX, sourceY) && Matrix.isInBound(board, targetX, targetY))){ return false; }
-		let cloneBoard = BoardUtils.cloneBoard(board);
-		BoardUtils._swapHelpper(cloneBoard, sourceX, sourceY, targetX, targetY);
+		let cloneBoard = Matrix.clone(board);
+		Matrix.swap(cloneBoard, sourceX, sourceY, targetX, targetY);
 		let result = BoardUtils.findMatchedAll(cloneBoard);
 		return result.length >= 3 ? result : false;
 	},
 
+	/**
+		Almost identical to testSwap, however will modify on success.
+	*/
 	swap: function(board, sourceX, sourceY, targetX, targetY){
 		let result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY);
-		if(result){ BoardUtils._swapHelpper(board, sourceX, sourceY, targetX, targetY); }
+		if(result){ Matrix.swap(board, sourceX, sourceY, targetX, targetY); }
 		return result;
 	},
 
-	hasPossibleMatch: function(board){
+	/**
+		Find all possible match on a board.
+		@arg {array} board - 2d array.
+		@return {array} - will return a list of matched elements. Returns an empty array if no matched elements was found.
+	*/
+	findPossibleMatch: function(board){
 		let patterns = BoardUtils._generatePatterns();
 		let resultList = [];
 
@@ -72,26 +111,78 @@ let BoardUtils = {
 	},
 
 	/**
+		Clear all matched elements with matchResult.
 		@arg {array} board - 2d array.
-		@arg {boolean} onlySize - only copy its height and width, false on default.
+		@arg {array} matchResult - can be obtained by invoking findMatchedAll.
+		@arg {object} empty - tell this function what is empty look like in the given board.
+		@return {array} - will return an array with removed elements. Formation is same to findMatched's result.
 	*/
-	cloneBoard: function(board, onlySize = false){
-		let clone = [];
+	clearMatched: function(board, matchResult, empty){
+		let removedList = [];
+		matchResult.forEach((ele) => {
+			removedList.push({x: ele.x, y: ele.y, type: board[ele.y][ele.x]});
+			board[ele.y][ele.x] = empty;
+		});
+		return removedList;
+	},
 
-		if(onlySize){
-			for(let y = 0; y < board.length; y++){
-				clone.push([]);
-				for(let x = 0; x < board[y].length; x++){
-					clone[y][x] = BoardUtils.UNVISITED;
+	/**
+		Make element fall when there are empty elements stay in the given board.
+		@arg {array} board - 2d array.
+		@arg {object} empty - tell this function what does empty look like in the given board.
+		@return {array} - will return an array with elements affected by gravity. Formation looks like following:
+			[
+				{fromX: 2, fromY: 0, toX: 2, toY: 5, type: 6},
+				{fromX: 3, fromY: 5, toX: 3, toY: 7, type: 2},
+				...
+			]
+	*/
+	triggerGravity: function(board, empty){
+		let resultList = [];
+		for(let x = 0; x < board[0].length; x++){
+			for(let y = board[x].length - 1; y >= 0; y--){
+				if(board[y][x] === empty){
+					for(let y2 = y - 1; y2 >= 0; y2--){
+						if(board[y2][x] !== empty){
+							resultList.push({fromX: x, fromY: y, toX: x, toY: y2, type: board[y2][x]});
+							Matrix.swap(board, x, y, x, y2);
+							break;
+						}
+					}
 				}
 			}
 		}
-		else{
-			board.forEach((ele) => {
-				clone.push(ele.slice(0));
-			});
+		return resultList;
+	},
+
+	/**
+		Fill empty elements with randomly picked type.
+		@arg {array} board - 2d array.
+		@arg {array} types - used for picking randomly to fill empty elements.
+		@arg {object} empty - tell this function what does empty look like in the given board.
+		@return {array} - will return an array with elements used for filling the empty.
+	*/
+	fillEmpty: function(board, types, empty){
+		let resultList = [];
+		for(let y = 0; y < board.length; y++){
+			for(let x = 0; x < board[y].length; x++){
+				if(board[y][x] === empty){
+					board[y][x] = Matrix.generateTypes(types);
+					resultList.push({x: x, y: y, type: board[y][x]});
+				}
+			}
 		}
-		return clone;
+		return resultList;
+	},
+
+	createBoard: function(width, height, types){
+		let board, matchedList, possibleMatchedList;
+		do{
+			board = Matrix.create(width, height, types);
+			matchedList = BoardUtils.findMatchedAll(board);
+			possibleMatchedList = BoardUtils.findPossibleMatch(board);
+		}while(matchedList.length > 0 || possibleMatchedList.length < 3);
+		return board;
 	},
 
 	debugPrint: function(board, matchedResult){
@@ -100,13 +191,14 @@ let BoardUtils = {
 		for(let y = 0; y < board.length; y++){
 			for(let x = 0; x < board[y].length; x++){
 				boardOutput += board[y][x] + ", ";
-
-				let index = matchedResult.findIndex((ele, index, arr) => {
-					if(x === ele.x && y === ele.y){
-						return true;
-					}
-				});
-				matchedOutput += (index >= 0) ? (matchedResult[index].type + ", ") : (" " + ", ");
+				if(matchedResult){
+					let index = matchedResult.findIndex((ele, index, arr) => {
+						if(x === ele.x && y === ele.y){
+							return true;
+						}
+					});
+					matchedOutput += (index >= 0) ? (matchedResult[index].type + ", ") : (" " + ", ");
+				}
 			}
 			boardOutput += "\n";
 			matchedOutput += "\n";
@@ -114,8 +206,10 @@ let BoardUtils = {
 
 		console.log("board:");
 		console.log(boardOutput);
-		console.log("matched:");
-		console.log(matchedOutput);
+		if(matchedResult){
+			console.log("matched:");
+			console.log(matchedOutput);
+		}
 	},
 
 	_removeMatchedDuplicates: function(list){
@@ -129,16 +223,6 @@ let BoardUtils = {
 			if(!hasOne){ resultList.push(list[i]); }
 		}
 		return resultList;
-	},
-
-	_swapHelpper: function(board, sourceX, sourceY, targetX, targetY){
-		let temp = board[targetY][targetX];
-		board[targetY][targetX] = board[sourceY][sourceX];
-		board[sourceY][sourceX] = temp;
-		return {
-			source: {x: sourceX, y: sourceY, type: board[sourceY][sourceX]},
-			target: {x: targetX, y: targetY, type: board[targetY][targetX]}
-		}
 	},
 
 	_generatePatterns: function(){
@@ -173,9 +257,6 @@ let BoardUtils = {
 			{pattern: verticalPattern3, anchorX: 1, anchorY: 0},
 		];
 	},
-
-	VISITED: 2,
-	UNVISITED: 1,
 };
 
 export {BoardUtils as default};

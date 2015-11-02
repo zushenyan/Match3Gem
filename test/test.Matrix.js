@@ -60,4 +60,26 @@ describe("Matrix", function(){
 			expect(result5).to.be.false;
 		});
 	});
+
+	describe("create", function(){
+		it("should work as intention", function(){
+			var matrix1 = Matrix.create(2, 3, [0]);
+			var matrix2 = Matrix.create(3, 2, [1]);
+			var matrix3 = Matrix.create(1, 1, [2]);
+			expect(matrix1).to.eql([ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ] ]);
+			expect(matrix2).to.eql([ [ 1, 1, 1 ], [ 1, 1, 1 ] ]);
+			expect(matrix3).to.eql([ [ 2 ] ]);
+		});
+	});
+
+	describe("create", function(){
+		it("should work as intention", function(){
+			var matrix1 = Matrix.clone(pattern1);
+			var matrix2 = Matrix.clone(pattern2);
+			var matrix3 = Matrix.clone(pattern3);
+			expect(matrix1).to.eql(pattern1);
+			expect(matrix2).to.eql(pattern2);
+			expect(matrix3).to.eql(pattern3);
+		});
+	});
 });

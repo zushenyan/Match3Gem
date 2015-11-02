@@ -47,7 +47,7 @@ function compile(watch, options){
 		debug: true // produce source map by enabling debug = true
 	};
 	var bundler = browserify(options.src + "/" + options.filename + options.oriExt, opts);
-	bundler.transform(options.transform);
+	bundler.transform(options.transform, options.transformOption);
 	function bundle(){
 		var stream = bundler
 			.bundle()
@@ -99,7 +99,9 @@ gulp.task("compileJs", function(){
 			filename: filename,
 			oriExt: ".js",
 			newExt: ".js",
-			transform: babelify
+			transform: babelify,
+			transformOption: {
+			}
 		};
 		return compile(false, options);
 	});
@@ -114,7 +116,9 @@ gulp.task("watchJs", function(){
 			filename: filename,
 			oriExt: ".js",
 			newExt: ".js",
-			transform: babelify
+			transform: babelify,
+			transformOption: {
+			}
 		};
 		return compile(true, options);
 	});

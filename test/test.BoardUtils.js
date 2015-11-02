@@ -1,5 +1,6 @@
 var expect = require("chai").expect;
 var bu = require("../dist/js/Main").BoardUtils;
+var Matrix = require("../dist/js/Main").Matrix;
 
 var sampleBoard = [
 	[2,3,4,5,6,7,8,9],
@@ -40,22 +41,6 @@ for(var i = 0; i < 10; i++){
 }
 
 describe("BoardUtils", function(){
-	describe("cloneBoard", function(){
-		it("should with onlySize = false", function(){
-			var clone = bu.cloneBoard(sampleBoard);
-			expect(clone).to.not.equal(sampleBoard);
-			expect(clone).to.eql(sampleBoard);
-		});
-		it("should with onlySize = true", function(){
-			var clone = bu.cloneBoard(sampleBoard, true);
-			for(var y = 0; y < clone.length; y++){
-				for(var x = 0; x < clone[y].length; x++){
-					expect(clone[y][x]).to.eql(bu.UNVISITED);
-				}
-			}
-		});
-	});
-
 	describe("removeMatchedDuplicates", function(){
 		it("should work as intention", function(){
 			var dup2 = bu._removeMatchedDuplicates(dup);
@@ -94,25 +79,98 @@ describe("BoardUtils", function(){
 
 	describe("swap", function(){
 		it("should not modify source on failure", function(){
-			var clone = bu.cloneBoard(sampleBoard2);
+			var clone = Matrix.clone(sampleBoard2);
 			var result = bu.swap(clone, 1, 4, 0, 4);
 			expect(clone).to.eql(sampleBoard2);
 		});
 		it("should modify source on success", function(){
-			var clone = bu.cloneBoard(sampleBoard3);
+			var clone = Matrix.clone(sampleBoard3);
 			var result = bu.swap(clone, 1, 4, 0, 4);
 			expect(clone).to.not.eql(sampleBoard3);
 		});
 	});
 
-	describe("hasPossibleMatch", function(){
+	describe("findPossibleMatch", function(){
 		it("should work as intention", function(){
-			var result1 = bu.hasPossibleMatch(sampleBoard2);
-			var result2 = bu.hasPossibleMatch(sampleBoard3);
-			var result3 = bu.hasPossibleMatch(sampleBoard);
+			var result1 = bu.findPossibleMatch(sampleBoard2);
+			var result2 = bu.findPossibleMatch(sampleBoard3);
+			var result3 = bu.findPossibleMatch(sampleBoard);
 			expect(result1).to.have.length(0);
 			expect(result2).to.have.length(19);
 			expect(result3).to.have.length(22);
+		});
+	});
+
+	describe("clearMatched", function(){
+		it("should work as intention", function(){
+			var clone = Matrix.clone(sampleBoard);
+			var matchedResult = bu.findMatchedAll(clone);
+			var removedList = bu.clearMatched(clone, matchedResult, 0);
+			expect(matchedResult).to.eql(removedList);
+		});
+	});
+
+	describe("triggerGravity", function(){
+		it("should work as intention", function(){
+			var clone = Matrix.clone(sampleBoard);
+			var matchedResult = bu.findMatchedAll(clone);
+			var removedList = bu.clearMatched(clone, matchedResult, 0);
+			var shiftedList = bu.triggerGravity(clone, 0);
+			expect(shiftedList).to.eql([
+				{ fromX: 0, fromY: 5, toX: 0, toY: 4, type: 2 },
+			  { fromX: 0, fromY: 4, toX: 0, toY: 3, type: 1 },
+			  { fromX: 0, fromY: 3, toX: 0, toY: 2, type: 1 },
+			  { fromX: 0, fromY: 2, toX: 0, toY: 1, type: 3 },
+			  { fromX: 0, fromY: 1, toX: 0, toY: 0, type: 2 },
+			  { fromX: 1, fromY: 5, toX: 1, toY: 4, type: 3 },
+			  { fromX: 1, fromY: 4, toX: 1, toY: 3, type: 1 },
+			  { fromX: 2, fromY: 5, toX: 2, toY: 4, type: 7 },
+			  { fromX: 2, fromY: 4, toX: 2, toY: 3, type: 4 },
+			  { fromX: 2, fromY: 3, toX: 2, toY: 2, type: 1 },
+			  { fromX: 2, fromY: 2, toX: 2, toY: 1, type: 4 },
+			  { fromX: 2, fromY: 1, toX: 2, toY: 0, type: 4 },
+			  { fromX: 3, fromY: 5, toX: 3, toY: 4, type: 8 },
+			  { fromX: 3, fromY: 4, toX: 3, toY: 3, type: 3 },
+			  { fromX: 3, fromY: 3, toX: 3, toY: 2, type: 2 },
+			  { fromX: 3, fromY: 2, toX: 3, toY: 1, type: 5 },
+			  { fromX: 3, fromY: 1, toX: 3, toY: 0, type: 5 },
+			  { fromX: 4, fromY: 5, toX: 4, toY: 0, type: 6 },
+			  { fromX: 5, fromY: 3, toX: 5, toY: 2, type: 1 },
+			  { fromX: 5, fromY: 2, toX: 5, toY: 1, type: 1 },
+			  { fromX: 5, fromY: 1, toX: 5, toY: 0, type: 7 },
+			  { fromX: 6, fromY: 3, toX: 6, toY: 2, type: 1 },
+			  { fromX: 6, fromY: 2, toX: 6, toY: 1, type: 1 },
+			  { fromX: 6, fromY: 1, toX: 6, toY: 0, type: 8 },
+			  { fromX: 7, fromY: 3, toX: 7, toY: 2, type: 6 },
+			  { fromX: 7, fromY: 2, toX: 7, toY: 1, type: 2 },
+			  { fromX: 7, fromY: 1, toX: 7, toY: 0, type: 9 } ]);
+		});
+	});
+
+	describe("fillEmpty", function(){
+		it("should work as intention", function(){
+			var clone = Matrix.clone(sampleBoard);
+			var matchedResult = bu.findMatchedAll(clone);
+			var removedList = bu.clearMatched(clone, matchedResult, 0);
+			// bu.debugPrint(clone);
+			var shiftedList = bu.triggerGravity(clone, 0);
+			// bu.debugPrint(clone);
+			var filledList = bu.fillEmpty(clone, [1,2,3,4,5,6,7,8,9], 0);
+			// bu.debugPrint(clone);
+		});
+	});
+
+	describe("createBoard", function(){
+		it("should work as intention", function(){
+			var types = [1,2,3,4,5,6,7,8,9];
+			var board, matched, possibleMatched;
+			for(var i = 0; i < 100; i++){
+				board = bu.createBoard(8, 8, types);
+				matched = bu.findMatchedAll(board);
+				possibleMatched = bu.findPossibleMatch(board);
+				expect(matched).to.be.empty;
+				expect(possibleMatched).to.have.length.of.at.least(3);
+			}
 		});
 	});
 });

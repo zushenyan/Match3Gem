@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/zushenyan/Fretboard-Awesome#readme",
   "devDependencies": {
+    "babel-polyfill": "^6.0.16",
     "babelify": "^6.3.0",
     "browser-sync": "^2.9.3",
     "browserify": "^11.1.0",

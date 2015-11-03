@@ -46,13 +46,13 @@ let Matrix = {
 	/**
 		@arg {number} width		- Width.
 		@arg {number} height	- Height.
-		@arg {array} 	types		- Initial value of every element. Pick up randomly from types array.
+		@arg {function} generatorFunction - let user decide how new elements were made.
 	*/
-	create: function(width, height, types){
+	create: function(width, height, generatorFunction){
 		let matrix = [];
 		for(let y = 0, row = []; y < height; y++, row = []){
 			for(let x = 0; x < width; x++){
-				row.push(Matrix.generateTypes(types));
+				row.push(generatorFunction());
 			}
 			matrix.push(row);
 		};
@@ -65,11 +65,6 @@ let Matrix = {
 			clone.push(ele.slice(0));
 		});
 		return clone;
-	},
-
-	generateTypes: function(types){
-		let index = Math.floor(Math.random() * types.length);
-		return types[index];
 	},
 };
 

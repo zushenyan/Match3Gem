@@ -4387,9 +4387,101 @@ Object.defineProperty(exports, "__esModule", {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _m3gBoardUtils = require("./m3g/BoardUtils");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _m3gBoardUtils2 = _interopRequireDefault(_m3gBoardUtils);
+var _GameScene = require("./GameScene");
+
+var _GameScene2 = _interopRequireDefault(_GameScene);
+
+var Boot = function Boot() {
+	_classCallCheck(this, Boot);
+
+	var game = new Phaser.Game(256, 288, Phaser.AUTO);
+	game.state.add("GameScene", new _GameScene2["default"](game));
+	game.state.start("GameScene");
+};
+
+exports["default"] = Boot;
+module.exports = exports["default"];
+
+},{"./GameScene":190}],190:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _m3gGameConstants = require("./m3g/GameConstants");
+
+var _m3gGameConstants2 = _interopRequireDefault(_m3gGameConstants);
+
+var _m3gGameManager = require("./m3g/GameManager");
+
+var _m3gGameManager2 = _interopRequireDefault(_m3gGameManager);
+
+var sampleBoard1 = [[1, 2, 3, 4, 5, 6, 7, 8], [8, 7, 6, 5, 4, 3, 2, 1], [1, 2, 3, 4, 5, 6, 7, 8], [8, 7, 6, 5, 4, 3, 2, 1], [1, 8, 3, 4, 5, 6, 7, 8], [8, 7, 6, 5, 4, 3, 2, 1], [1, 2, 3, 4, 5, 6, 7, 8], [8, 7, 6, 5, 4, 3, 2, 1]];
+
+var sampleBoard2 = [[1, 2, 2, 1, 2, 1, 1, 2], [2, 1, 1, 2, 1, 2, 2, 1], [1, 2, 2, 1, 2, 1, 1, 2], [2, 1, 1, 2, 1, 2, 2, 1], [1, 2, 2, 1, 2, 1, 1, 2], [2, 1, 1, 2, 1, 2, 2, 1], [1, 2, 2, 1, 2, 1, 1, 2], [2, 1, 1, 2, 1, 2, 2, 1]];
+
+var TITLE_UI_ANCHOR = 0;
+var BOARD_UI_ANCHOR = 32;
+
+var GameScene = (function () {
+	function GameScene(game) {
+		_classCallCheck(this, GameScene);
+
+		this.game = game;
+		this.gm = new _m3gGameManager2["default"](sampleBoard1);
+		this.spritePool = [];
+	}
+
+	_createClass(GameScene, [{
+		key: "preload",
+		value: function preload() {
+			for (var i = 0, j = i + 1; i < _m3gGameConstants2["default"].TYPES.length; i++, j++) {
+				this.game.load.image("gem" + j, "../media/" + j + ".png");
+			}
+			this.game.load.audio("sfx", ["../media/gem_fall.wav", "../media/gem_matched.wav"]);
+		}
+	}, {
+		key: "create",
+		value: function create() {
+			var board = this.gm.getBoard();
+			var index = undefined;
+			for (var y = 0; y < board.length; y++) {
+				for (var x = 0; x < board[y].length; x++) {
+					var px = x * 32;
+					var py = BOARD_UI_ANCHOR + y * 32;
+					var spriteName = "gem" + board[y][x];
+					this.game.add.sprite(px, py, spriteName);
+				}
+			}
+		}
+	}, {
+		key: "update",
+		value: function update() {}
+	}]);
+
+	return GameScene;
+})();
+
+exports["default"] = GameScene;
+module.exports = exports["default"];
+
+},{"./m3g/GameConstants":195,"./m3g/GameManager":196}],191:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var _m3gPattern = require("./m3g/Pattern");
 
@@ -4399,16 +4491,173 @@ var _m3gMatrix = require("./m3g/Matrix");
 
 var _m3gMatrix2 = _interopRequireDefault(_m3gMatrix);
 
+var _m3gBoardUtils = require("./m3g/BoardUtils");
+
+var _m3gBoardUtils2 = _interopRequireDefault(_m3gBoardUtils);
+
+var _m3gBoardPatterns = require("./m3g/BoardPatterns");
+
+var _m3gBoardPatterns2 = _interopRequireDefault(_m3gBoardPatterns);
+
+var _m3gBoard = require("./m3g/Board");
+
+var _m3gBoard2 = _interopRequireDefault(_m3gBoard);
+
 var _m3gGameManager = require("./m3g/GameManager");
 
 var _m3gGameManager2 = _interopRequireDefault(_m3gGameManager);
 
-exports.BoardUtils = _m3gBoardUtils2["default"];
+var _GameScene = require("./GameScene");
+
+var _GameScene2 = _interopRequireDefault(_GameScene);
+
+var _Boot = require("./Boot");
+
+var _Boot2 = _interopRequireDefault(_Boot);
+
 exports.Pattern = _m3gPattern2["default"];
 exports.Matrix = _m3gMatrix2["default"];
+exports.BoardUtils = _m3gBoardUtils2["default"];
+exports.BoardPatterns = _m3gBoardPatterns2["default"];
+exports.Board = _m3gBoard2["default"];
 exports.GameManager = _m3gGameManager2["default"];
+exports.GameScene = _GameScene2["default"];
+exports.Boot = _Boot2["default"];
 
-},{"./m3g/BoardUtils":190,"./m3g/GameManager":192,"./m3g/Matrix":193,"./m3g/Pattern":194}],190:[function(require,module,exports){
+},{"./Boot":189,"./GameScene":190,"./m3g/Board":192,"./m3g/BoardPatterns":193,"./m3g/BoardUtils":194,"./m3g/GameManager":196,"./m3g/Matrix":197,"./m3g/Pattern":198}],192:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _BoardUtils = require("./BoardUtils");
+
+var _BoardUtils2 = _interopRequireDefault(_BoardUtils);
+
+var Board = (function () {
+	function Board(sampleBoard) {
+		_classCallCheck(this, Board);
+
+		this._idCounter = 0;
+		this._board = null;
+	}
+
+	_createClass(Board, [{
+		key: "newBoard",
+		value: function newBoard(width, height) {
+			this._board = _BoardUtils2["default"].createBoard(width, height, this._generatorFunction, this._compareFunction);
+		}
+	}, {
+		key: "findMatchedAll",
+		value: function findMatchedAll() {
+			return _BoardUtils2["default"].findMatchedAll(this._board, this._compareFunction);
+		}
+	}, {
+		key: "testSwap",
+		value: function testSwap(sourceX, sourceY, targetX, targetY) {
+			return _BoardUtils2["default"].testSwap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
+		}
+	}, {
+		key: "swap",
+		value: function swap(sourceX, sourceY, targetX, targetY) {
+			return _BoardUtils2["default"].swap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
+		}
+	}, {
+		key: "findPossibleMatch",
+		value: function findPossibleMatch() {
+			return _BoardUtils2["default"].findPossibleMatch(this._board, this._compareFunction);
+		}
+	}, {
+		key: "clearMatched",
+		value: function clearMatched(matchedResult) {
+			return _BoardUtils2["default"].clearMatched(this._board, matchedResult, Board.EMPTY);
+		}
+	}, {
+		key: "triggerGravity",
+		value: function triggerGravity() {
+			return _BoardUtils2["default"].triggerGravity(this._board, Board.EMPTY);
+		}
+	}, {
+		key: "fillEmpty",
+		value: function fillEmpty() {
+			return _BoardUtils2["default"].fillEmpty(this._board, Board.EMPTY, this._generatorFunction);
+		}
+	}, {
+		key: "debugPrint",
+		value: function debugPrint(matchedResult) {
+			_BoardUtils2["default"].debugPrint(this._board, matchedResult, function (ele) {
+				return ele.type;
+			});
+		}
+	}, {
+		key: "getBoard",
+		value: function getBoard() {
+			return this._board;
+		}
+	}, {
+		key: "_generatorFunction",
+		value: function _generatorFunction() {
+			var index = Math.floor(Math.random() * Board.TYPES.length);
+			return {
+				type: Board.TYPES[index],
+				id: this._idCounter++
+			};
+		}
+	}, {
+		key: "_compareFunction",
+		value: function _compareFunction(ele1, ele2) {
+			return ele1.type === ele2.type;
+		}
+	}], [{
+		key: "TYPES",
+		get: function get() {
+			return [1, 2, 3, 4, 5, 6, 7, 8];
+		}
+	}, {
+		key: "EMPTY",
+		get: function get() {
+			return 0;
+		}
+	}]);
+
+	return Board;
+})();
+
+exports.Board = Board;
+
+},{"./BoardUtils":194}],193:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _Matrix = require("./Matrix");
+
+var _Matrix2 = _interopRequireDefault(_Matrix);
+
+var horizontalPattern1 = [[1, 1, 0], [0, 0, 1]];
+var horizontalPattern2 = [[1, 0, 0], [0, 1, 1]];
+var horizontalPattern3 = [[1, 0, 1], [0, 1, 0]];
+var verticalPattern1 = _Matrix2["default"].transpose(horizontalPattern1);
+var verticalPattern2 = _Matrix2["default"].transpose(horizontalPattern2);
+var verticalPattern3 = _Matrix2["default"].transpose(horizontalPattern3);
+
+var BoardPatterns = [{ pattern: horizontalPattern1, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern1, anchorX: 0, anchorY: 1 }, { pattern: horizontalPattern2, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern2, anchorX: 0, anchorY: 1 }, { pattern: horizontalPattern3, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern3, anchorX: 0, anchorY: 1 }, { pattern: verticalPattern1, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern1, anchorX: 1, anchorY: 0 }, { pattern: verticalPattern2, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern2, anchorX: 1, anchorY: 0 }, { pattern: verticalPattern3, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern3, anchorX: 1, anchorY: 0 }];
+
+exports["default"] = BoardPatterns;
+module.exports = exports["default"];
+
+},{"./Matrix":197}],194:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4425,70 +4674,76 @@ var _Pattern = require("./Pattern");
 
 var _Pattern2 = _interopRequireDefault(_Pattern);
 
+var _BoardPatterns = require("./BoardPatterns");
+
+var _BoardPatterns2 = _interopRequireDefault(_BoardPatterns);
+
 var BoardUtils = {
 	/**
  	find same type of a element with given point on board.
  	@arg {array} board - 2d array.
  	@arg {number} startX - startX.
  	@arg {number} startY - startY.
+ 	@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
  	@return {object} - will return a list of matched elements, like following example: (will return an empty array if not found)
  		[
- 		{x: 1, y: 3, type: type},
- 		{x: x, y: y, type: type},
- 		...
+ 			{x: 1, y: 3, element: ele},
+ 			{x: x, y: y, element: ele},
+ 			...
  		]
  */
-	findMatched: function findMatched(board, startX, startY) {
-		var targetType = board[startY][startX];
+	findMatched: function findMatched(board, startX, startY, compareFunction) {
+		var targetElement = board[startY][startX];
 		var rightList = [];
 		var downList = [];
 		var resultList = [];
 
-		walkDirection(board, startX, startY, targetType, "right", rightList);
-		walkDirection(board, startX, startY, targetType, "down", downList);
+		walkDirection(board, startX, startY, targetElement, "right", rightList);
+		walkDirection(board, startX, startY, targetElement, "down", downList);
 
 		resultList = rightList.length >= 3 ? resultList.concat(rightList) : resultList;
 		resultList = downList.length >= 3 ? resultList.concat(downList) : resultList;
 
-		return BoardUtils._removeMatchedDuplicates(resultList);
+		return BoardUtils._removeMatchedDuplicates(resultList, compareFunction);
 
-		function walkDirection(board, x, y, type, direction, matchedList) {
-			if (!isValidDirection(board, x, y, type)) {
+		function walkDirection(board, x, y, targetElement, direction, matchedList) {
+			if (!isValidDirection(board, x, y, targetElement)) {
 				return;
 			}
-			matchedList.push({ x: x, y: y, type: type });
+			matchedList.push({ x: x, y: y, element: targetElement });
 			switch (direction) {
 				case "right":
-					walkDirection(board, x + 1, y, type, "right", matchedList);break;
+					walkDirection(board, x + 1, y, targetElement, "right", matchedList);break;
 				case "down":
-					walkDirection(board, x, y + 1, type, "down", matchedList);break;
+					walkDirection(board, x, y + 1, targetElement, "down", matchedList);break;
 			}
 		}
 
-		function isValidDirection(board, x, y, type) {
-			return _Matrix2["default"].isInBound(board, x, y) && board[y][x] === type;
+		function isValidDirection(board, x, y, targetElement) {
+			return _Matrix2["default"].isInBound(board, x, y) && compareFunction(targetElement, board[y][x]);
 		}
 	},
 
 	/**
  	find same type of all elements with given board.
  	@arg {array} board - 2d array.
+ 	@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
  	@return {object} - will return a list of matched elements, like following example: (will return an empty array if not found)
  		[
- 		{x: 1, y: 3, type: type},
- 		{x: x, y: y, type: type},
- 		...
+ 			{x: 1, y: 3, element: ele},
+ 			{x: x, y: y, element: ele},
+ 			...
  		]
  */
-	findMatchedAll: function findMatchedAll(board) {
+	findMatchedAll: function findMatchedAll(board, compareFunction) {
 		var resultList = [];
 		for (var y = 0; y < board.length; y++) {
 			for (var x = 0; x < board[y].length; x++) {
-				var result = BoardUtils.findMatched(board, x, y);
+				var result = BoardUtils.findMatched(board, x, y, compareFunction);
 				resultList = resultList.concat(result);
 			}
 		}
-		return BoardUtils._removeMatchedDuplicates(resultList);
+		return BoardUtils._removeMatchedDuplicates(resultList, compareFunction);
 	},
 
 	/**
@@ -4498,23 +4753,36 @@ var BoardUtils = {
  	@arg {number} sourceY - sourceY.
  	@arg {number} targetX - targetX.
  	@arg {number} targetY - targetY.
+ 	@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
  	@return {array, boolean} - will return an list of matched elements. Only returns array with 3+ elements on success or false on failure.
  */
-	testSwap: function testSwap(board, sourceX, sourceY, targetX, targetY) {
+	testSwap: function testSwap(board, sourceX, sourceY, targetX, targetY, compareFunction) {
 		if (!(_Matrix2["default"].isInBound(board, sourceX, sourceY) && _Matrix2["default"].isInBound(board, targetX, targetY))) {
+			return false;
+		}
+		if (!isNear(board, sourceX, sourceY, targetX, targetY)) {
 			return false;
 		}
 		var cloneBoard = _Matrix2["default"].clone(board);
 		_Matrix2["default"].swap(cloneBoard, sourceX, sourceY, targetX, targetY);
-		var result = BoardUtils.findMatchedAll(cloneBoard);
+		var result = BoardUtils.findMatchedAll(cloneBoard, compareFunction);
 		return result.length >= 3 ? result : false;
+
+		function isNear(board, sourceX, sourceY, targetX, tagretY) {
+			var diffX = Math.abs(targetX - sourceX);
+			var diffY = Math.abs(targetY - sourceY);
+			if (diffX > 1 || diffY > 1) {
+				return false;
+			}
+			return Math.abs(diffX - diffY) === 1 ? true : false;
+		}
 	},
 
 	/**
- 	Almost identical to testSwap, however will modify on success.
+ 	Almost identical to testSwap, except it will modify original board on success.
  */
-	swap: function swap(board, sourceX, sourceY, targetX, targetY) {
-		var result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY);
+	swap: function swap(board, sourceX, sourceY, targetX, targetY, compareFunction) {
+		var result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY, compareFunction);
 		if (result) {
 			_Matrix2["default"].swap(board, sourceX, sourceY, targetX, targetY);
 		}
@@ -4524,23 +4792,22 @@ var BoardUtils = {
 	/**
  	Find all possible match on a board.
  	@arg {array} board - 2d array.
+ 	@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
  	@return {array} - will return a list of matched elements. Returns an empty array if no matched elements was found.
  */
-	findPossibleMatch: function findPossibleMatch(board) {
-		var patterns = BoardUtils._generatePatterns();
+	findPossibleMatch: function findPossibleMatch(board, compareFunction) {
 		var resultList = [];
-
 		for (var y = 0; y < board.length; y++) {
 			for (var x = 0; x < board[y].length; x++) {
-				for (var i = 0; i < patterns.length; i++) {
-					var result = _Pattern2["default"].comparePattern(board, x, y, patterns[i].pattern, patterns[i].anchorX, patterns[i].anchorY);
+				for (var i = 0; i < _BoardPatterns2["default"].length; i++) {
+					var result = _Pattern2["default"].comparePattern(board, x, y, _BoardPatterns2["default"][i].pattern, _BoardPatterns2["default"][i].anchorX, _BoardPatterns2["default"][i].anchorY, compareFunction);
 					if (result) {
 						resultList = resultList.concat(result);
 					}
 				}
 			}
 		}
-		resultList = BoardUtils._removeMatchedDuplicates(resultList);
+		resultList = BoardUtils._removeMatchedDuplicates(resultList, compareFunction);
 		return resultList;
 	},
 
@@ -4554,7 +4821,7 @@ var BoardUtils = {
 	clearMatched: function clearMatched(board, matchResult, empty) {
 		var removedList = [];
 		matchResult.forEach(function (ele) {
-			removedList.push({ x: ele.x, y: ele.y, type: board[ele.y][ele.x] });
+			removedList.push({ x: ele.x, y: ele.y, element: board[ele.y][ele.x] });
 			board[ele.y][ele.x] = empty;
 		});
 		return removedList;
@@ -4578,7 +4845,7 @@ var BoardUtils = {
 				if (board[y][x] === empty) {
 					for (var y2 = y - 1; y2 >= 0; y2--) {
 						if (board[y2][x] !== empty) {
-							resultList.push({ fromX: x, fromY: y, toX: x, toY: y2, type: board[y2][x] });
+							resultList.push({ fromX: x, fromY: y, toX: x, toY: y2, element: board[y2][x] });
 							_Matrix2["default"].swap(board, x, y, x, y2);
 							break;
 						}
@@ -4592,49 +4859,62 @@ var BoardUtils = {
 	/**
  	Fill empty elements with randomly picked type.
  	@arg {array} board - 2d array.
- 	@arg {array} types - used for picking randomly to fill empty elements.
  	@arg {object} empty - tell this function what does empty look like in the given board.
+ 	@arg {function} generatorFunction - let user decide how new elements were made.
  	@return {array} - will return an array with elements used for filling the empty.
  */
-	fillEmpty: function fillEmpty(board, types, empty) {
+	fillEmpty: function fillEmpty(board, empty, generatorFunction) {
 		var resultList = [];
 		for (var y = 0; y < board.length; y++) {
 			for (var x = 0; x < board[y].length; x++) {
 				if (board[y][x] === empty) {
-					board[y][x] = _Matrix2["default"].generateTypes(types);
-					resultList.push({ x: x, y: y, type: board[y][x] });
+					board[y][x] = generatorFunction();
+					resultList.push({ x: x, y: y, element: board[y][x] });
 				}
 			}
 		}
 		return resultList;
 	},
 
-	createBoard: function createBoard(width, height, types) {
+	/**
+ 	Create an new board.
+ 	@arg {number} width - board width.
+ 	@arg {number} height - board height.
+ 	@arg {function} generatorFunction - let user decide how new elements were made.
+ 	@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+ 	@return {2d-array} - give you an new board.
+ */
+	createBoard: function createBoard(width, height, generatorFunction, compareFunction) {
 		var board = undefined,
 		    matchedList = undefined,
 		    possibleMatchedList = undefined;
 		do {
-			board = _Matrix2["default"].create(width, height, types);
-			matchedList = BoardUtils.findMatchedAll(board);
-			possibleMatchedList = BoardUtils.findPossibleMatch(board);
+			board = _Matrix2["default"].create(width, height, generatorFunction);
+			matchedList = BoardUtils.findMatchedAll(board, compareFunction);
+			possibleMatchedList = BoardUtils.findPossibleMatch(board, compareFunction);
 		} while (matchedList.length > 0 || possibleMatchedList.length < 3);
 		return board;
 	},
 
-	debugPrint: function debugPrint(board, matchedResult) {
+	/**
+ 	@arg {2d-array} board - board.
+ 	@arg {arry} matchedResult - get one from findMatched or findMatchedAll.
+ 	@arg {function} valueFunction - decide what user want to output. Will pass in an element.
+ */
+	debugPrint: function debugPrint(board, matchedResult, valueFunction) {
 		var boardOutput = "";
 		var matchedOutput = "";
 
 		var _loop = function (y) {
 			var _loop2 = function (x) {
-				boardOutput += board[y][x] + ", ";
+				boardOutput += valueFunction(board[y][x]) + ", ";
 				if (matchedResult) {
 					var index = matchedResult.findIndex(function (ele, index, arr) {
 						if (x === ele.x && y === ele.y) {
 							return true;
 						}
 					});
-					matchedOutput += index >= 0 ? matchedResult[index].type + ", " : " " + ", ";
+					matchedOutput += index >= 0 ? valueFunction(matchedResult[index].element) + ", " : " " + ", ";
 				}
 			};
 
@@ -4657,12 +4937,12 @@ var BoardUtils = {
 		}
 	},
 
-	_removeMatchedDuplicates: function _removeMatchedDuplicates(list) {
+	_removeMatchedDuplicates: function _removeMatchedDuplicates(list, compareFunction) {
 		var resultList = [];
 
 		var _loop3 = function (i) {
 			var hasOne = resultList.find(function (ele) {
-				if (list[i].x === ele.x && list[i].y === ele.y && list[i].type === ele.type) {
+				if (list[i].x === ele.x && list[i].y === ele.y && compareFunction(list[i].element, ele.element)) {
 					return true;
 				}
 			});
@@ -4675,24 +4955,13 @@ var BoardUtils = {
 			_loop3(i);
 		}
 		return resultList;
-	},
-
-	_generatePatterns: function _generatePatterns() {
-		var horizontalPattern1 = [[1, 1, 0], [0, 0, 1]];
-		var horizontalPattern2 = [[1, 0, 0], [0, 1, 1]];
-		var horizontalPattern3 = [[1, 0, 1], [0, 1, 0]];
-		var verticalPattern1 = _Matrix2["default"].transpose(horizontalPattern1);
-		var verticalPattern2 = _Matrix2["default"].transpose(horizontalPattern2);
-		var verticalPattern3 = _Matrix2["default"].transpose(horizontalPattern3);
-
-		return [{ pattern: horizontalPattern1, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern1, anchorX: 0, anchorY: 1 }, { pattern: horizontalPattern2, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern2, anchorX: 0, anchorY: 1 }, { pattern: horizontalPattern3, anchorX: 0, anchorY: 0 }, { pattern: horizontalPattern3, anchorX: 0, anchorY: 1 }, { pattern: verticalPattern1, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern1, anchorX: 1, anchorY: 0 }, { pattern: verticalPattern2, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern2, anchorX: 1, anchorY: 0 }, { pattern: verticalPattern3, anchorX: 0, anchorY: 0 }, { pattern: verticalPattern3, anchorX: 1, anchorY: 0 }];
 	}
 };
 
 exports["default"] = BoardUtils;
 module.exports = exports["default"];
 
-},{"./Matrix":193,"./Pattern":194}],191:[function(require,module,exports){
+},{"./BoardPatterns":193,"./Matrix":197,"./Pattern":198}],195:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4700,18 +4969,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 var GameConstants = {
 	SIZE_WIDTH: 8,
-	SIZE_HEIGHT: 8,
-
-	TYPES: [1, 2, 3, 4, 5, 6, 7, 8],
-	EMPTY: 0,
-
-	TIME_LIMIT: 60
+	SIZE_HEIGHT: 8
 };
 
 exports["default"] = GameConstants;
 module.exports = exports["default"];
 
-},{}],192:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4827,7 +5091,7 @@ var GameManager = (function () {
 exports["default"] = GameManager;
 module.exports = exports["default"];
 
-},{"./BoardUtils":190,"./GameConstants":191,"babel-polyfill":1}],193:[function(require,module,exports){
+},{"./BoardUtils":194,"./GameConstants":195,"babel-polyfill":1}],197:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4883,13 +5147,13 @@ var Matrix = {
 	/**
  	@arg {number} width		- Width.
  	@arg {number} height	- Height.
- 	@arg {array} 	types		- Initial value of every element. Pick up randomly from types array.
+ 	@arg {function} generatorFunction - let user decide how new elements were made.
  */
-	create: function create(width, height, types) {
+	create: function create(width, height, generatorFunction) {
 		var matrix = [];
 		for (var y = 0, row = []; y < height; y++, row = []) {
 			for (var x = 0; x < width; x++) {
-				row.push(Matrix.generateTypes(types));
+				row.push(generatorFunction());
 			}
 			matrix.push(row);
 		};
@@ -4902,18 +5166,13 @@ var Matrix = {
 			clone.push(ele.slice(0));
 		});
 		return clone;
-	},
-
-	generateTypes: function generateTypes(types) {
-		var index = Math.floor(Math.random() * types.length);
-		return types[index];
 	}
 };
 
 exports["default"] = Matrix;
 module.exports = exports["default"];
 
-},{}],194:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4932,11 +5191,11 @@ var Pattern = {
 			throw new Error("Anchor is out of bound! " + anchorX + ", " + anchorY);
 		}
 		var diff = [];
-		var targetType = pattern[anchorY][anchorX];
+		var targetElement = pattern[anchorY][anchorX];
 		var counter = 0;
 		for (var y = 0; y < pattern.length; y++) {
 			for (var x = 0; x < pattern[y].length; x++) {
-				if (pattern[y][x] === targetType) {
+				if (pattern[y][x] === targetElement) {
 					var diffX = x - anchorX;
 					var diffY = y - anchorY;
 					diff.push({ x: diffX, y: diffY });
@@ -4947,18 +5206,18 @@ var Pattern = {
 		return { diff: diff, counter: counter };
 	},
 
-	comparePattern: function comparePattern(board, x, y, pattern, anchorX, anchorY) {
+	comparePattern: function comparePattern(matrix, x, y, pattern, anchorX, anchorY, compareFunction) {
 		var patternResult = Pattern.makePattern(pattern, anchorX, anchorY);
 		var result = [];
-		var targetType = board[y][x];
+		var targetElement = matrix[y][x];
 		var counter = 0;
 		for (var i = 0; i < patternResult.diff.length; i++) {
 			var newX = x + patternResult.diff[i].x;
 			var newY = y + patternResult.diff[i].y;
-			if (_Matrix2["default"].isInBound(board, newX, newY)) {
-				if (board[newY][newX] === targetType) {
+			if (_Matrix2["default"].isInBound(matrix, newX, newY)) {
+				if (compareFunction(targetElement, matrix[newY][newX])) {
 					counter++;
-					result.push({ x: newX, y: newY, type: board[newY][newX] });
+					result.push({ x: newX, y: newY, type: matrix[newY][newX] });
 				}
 			}
 		}
@@ -4969,7 +5228,7 @@ var Pattern = {
 exports["default"] = Pattern;
 module.exports = exports["default"];
 
-},{"./Matrix":193}]},{},[189])(189)
+},{"./Matrix":197}]},{},[191])(191)
 });
 
 

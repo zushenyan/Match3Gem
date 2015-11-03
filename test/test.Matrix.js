@@ -63,16 +63,16 @@ describe("Matrix", function(){
 
 	describe("create", function(){
 		it("should work as intention", function(){
-			var matrix1 = Matrix.create(2, 3, [0]);
-			var matrix2 = Matrix.create(3, 2, [1]);
-			var matrix3 = Matrix.create(1, 1, [2]);
+			var matrix1 = Matrix.create(2, 3, function(){return 0;});
+			var matrix2 = Matrix.create(3, 2, function(){return 1;});
+			var matrix3 = Matrix.create(1, 1, function(){return 2;});
 			expect(matrix1).to.eql([ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ] ]);
 			expect(matrix2).to.eql([ [ 1, 1, 1 ], [ 1, 1, 1 ] ]);
 			expect(matrix3).to.eql([ [ 2 ] ]);
 		});
 	});
 
-	describe("create", function(){
+	describe("clone", function(){
 		it("should work as intention", function(){
 			var matrix1 = Matrix.clone(pattern1);
 			var matrix2 = Matrix.clone(pattern2);

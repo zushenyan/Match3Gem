@@ -51,6 +51,10 @@ var pattern4 = [
 	[1,0]
 ];
 
+var compareFunc2 = function(ele1, ele2){
+	return (ele1 === ele2) ? true : false;
+};
+
 describe("Pattern", function(){
 	describe("makePattern", function(){
 		it("should throw", function(){
@@ -74,11 +78,11 @@ describe("Pattern", function(){
 
 	describe("comparePattern", function(){
 		it("should work as intended", function(){
-			var result1 = Pattern.comparePattern(sampleBoard, 0, 3, pattern1, 0, 1);
-			var result2 = Pattern.comparePattern(sampleBoard, 5, 1, pattern2, 0, 0);
-			var result3 = Pattern.comparePattern(sampleBoard, 7, 2, pattern3, 0, 0);
-			var result4 = Pattern.comparePattern(sampleBoard, 7, 7, pattern3, 0, 0);
-			var result5 = Pattern.comparePattern(sampleBoard, 7, 2, pattern3, 1, 0);
+			var result1 = Pattern.comparePattern(sampleBoard, 0, 3, pattern1, 0, 1, compareFunc2);
+			var result2 = Pattern.comparePattern(sampleBoard, 5, 1, pattern2, 0, 0, compareFunc2);
+			var result3 = Pattern.comparePattern(sampleBoard, 7, 2, pattern3, 0, 0, compareFunc2);
+			var result4 = Pattern.comparePattern(sampleBoard, 7, 7, pattern3, 0, 0, compareFunc2);
+			var result5 = Pattern.comparePattern(sampleBoard, 7, 2, pattern3, 1, 0, compareFunc2);
 			expect(result1).to.have.length(3);
 			expect(result2).to.have.length(4);
 			expect(result3).to.equal(null);

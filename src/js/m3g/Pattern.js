@@ -30,7 +30,7 @@ let Pattern = {
 			if(Matrix.isInBound(matrix, newX, newY)){
 				if(compareFunction(targetElement, matrix[newY][newX])){
 					counter++;
-					result.push({x: newX, y: newY, type: matrix[newY][newX]});
+					result.push({x: newX, y: newY, element: matrix[newY][newX]});
 				}
 			}
 		}

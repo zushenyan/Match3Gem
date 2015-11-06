@@ -1,5 +1,7 @@
-import GameConstants from "./m3g/GameConstants";
-import GameManager from "./m3g/GameManager";
+import Board from "./m3g/Board";
+import GameConstants from "./GameConstants";
+import GameInput from "./GameInput";
+import Animator from "./Animator";
 
 var sampleBoard1 = [
 	[1,2,3,4,5,6,7,8],
@@ -23,37 +25,59 @@ let sampleBoard2 = [
 	[2,1,1,2,1,2,2,1]
 ];
 
-let TITLE_UI_ANCHOR = 0;
-let BOARD_UI_ANCHOR = 32;
-
 export default class GameScene{
 	constructor(game){
 		this.game = game;
-		this.gm = new GameManager(sampleBoard1);
-		this.spritePool = [];
+		this.board = new Board();
+		this.board.newBoardWithSample(sampleBoard1);
+		this.gameInput = new GameInput(this.game);
+		this.animator = new Animator(this.game);
+
+		this.soundFall = null;
+		this.soundMatch = null;
 	}
 
 	preload(){
-		for(let i = 0, j = i + 1; i < GameConstants.TYPES.length; i++, j++){
+		for(let i = 0, j = i + 1; i < Board.TYPES.length; i++, j++){
 			this.game.load.image("gem" + j, "../media/" + j + ".png");
 		}
-		this.game.load.audio("sfx", ["../media/gem_fall.wav", "../media/gem_matched.wav"]);
+		this.game.load.audio("sound_fall", "../media/gem_fall.wav");
+		this.game.load.audio("sound_match", "../media/gem_matched.wav");
 	}
 
 	create(){
-		let board = this.gm.getBoard();
-		let index;
+		this.soundFall = this.game.add.audio("sound_fall");
+		this.soundMatch = this.game.add.audio("sound_match");
+
+		this.gameInput.enableCapture();
+
+		this._newBoard();
+	}
+
+	update(){
+		this.animator.update();
+		this.gameInput.update(this._inputCallback.bind(this));
+	}
+
+	_inputCallback(oldCoord, newCoord){
+
+	}
+
+	_newBoard(){
+		let board = this.board.getBoard();
 		for(let y = 0; y < board.length; y++){
 			for(let x = 0; x < board[y].length; x++){
-				let px = x * 32;
-				let py = BOARD_UI_ANCHOR + y * 32;
-				let spriteName = "gem" + board[y][x];
-				this.game.add.sprite(px, py, spriteName);
+				this._addGem(x, y, board[y][x].type, board[y][x].id);
 			}
 		}
 	}
 
-	update(){
-
+	_addGem(x, y, type, id){
+		let startX = x * GameConstants.TILE_SIZE;
+		let startY = (y - GameConstants.BOARD_HEIGHT) * GameConstants.TILE_SIZE;
+		let destX = startX;
+		let destY = y * GameConstants.TILE_SIZE;
+		let spriteName = "gem" + type;
+		this.animator.addSprite(startX, startY, destX, destY, spriteName, id);
 	}
 }

@@ -4,11 +4,12 @@ import BoardPatterns from "./BoardPatterns";
 
 let BoardUtils = {
 	/**
-		find same type of a element with given point on board.
+		find same element with a given point on board.
 		@arg {array} board - 2d array.
 		@arg {number} startX - startX.
 		@arg {number} startY - startY.
 		@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+		@arg {function} isDuplicateFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
 		@return {object} - will return a list of matched elements, like following example: (will return an empty array if not found)
 			[
 				{x: 1, y: 3, element: ele},
@@ -16,7 +17,7 @@ let BoardUtils = {
 				...
 			]
 	*/
-	findMatched: function(board, startX, startY, compareFunction){
+	findMatched: function(board, startX, startY, compareFunction, isDuplicateFunction){
 		let targetElement = board[startY][startX];
 		let rightList = [];
 		let downList = [];
@@ -28,11 +29,11 @@ let BoardUtils = {
 		resultList = (rightList.length >= 3) ? resultList.concat(rightList) : resultList;
 		resultList = (downList.length >= 3) ? resultList.concat(downList) : resultList;
 
-		return BoardUtils._removeMatchedDuplicates(resultList, compareFunction);
+		return BoardUtils._removeMatchedDuplicates(resultList, isDuplicateFunction);
 
 		function walkDirection(board, x, y, targetElement, direction, matchedList){
 			if(!isValidDirection(board, x, y, targetElement)){ return; }
-			matchedList.push({x: x, y: y, element: targetElement});
+			matchedList.push({x: x, y: y, element: board[y][x]});
 			switch(direction){
 				case "right": walkDirection(board, x + 1, y, targetElement, "right", matchedList); break;
 				case "down": walkDirection(board, x, y + 1, targetElement, "down", matchedList); break;
@@ -45,9 +46,10 @@ let BoardUtils = {
 	},
 
 	/**
-		find same type of all elements with given board.
+		find same element with a given board.
 		@arg {array} board - 2d array.
 		@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+		@arg {function} isDuplicateFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
 		@return {object} - will return a list of matched elements, like following example: (will return an empty array if not found)
 			[
 				{x: 1, y: 3, element: ele},
@@ -55,15 +57,15 @@ let BoardUtils = {
 				...
 			]
 	*/
-	findMatchedAll: function(board, compareFunction){
+	findMatchedAll: function(board, compareFunction, isDuplicateFunction){
 		let resultList = [];
 		for(let y = 0; y < board.length; y++){
 			for(let x = 0; x < board[y].length; x++){
-				let result = BoardUtils.findMatched(board, x, y, compareFunction);
+				let result = BoardUtils.findMatched(board, x, y, compareFunction, isDuplicateFunction);
 				resultList = resultList.concat(result);
 			}
 		}
-		return BoardUtils._removeMatchedDuplicates(resultList, compareFunction);
+		return BoardUtils._removeMatchedDuplicates(resultList, isDuplicateFunction);
 	},
 
 	/**
@@ -105,9 +107,10 @@ let BoardUtils = {
 		Find all possible match on a board.
 		@arg {array} board - 2d array.
 		@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+		@arg {function} isDuplicateFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
 		@return {array} - will return a list of matched elements. Returns an empty array if no matched elements was found.
 	*/
-	findPossibleMatch: function(board, compareFunction){
+	findPossibleMatch: function(board, compareFunction, isDuplicateFunction){
 		let resultList = [];
 		for(let y = 0; y < board.length; y++){
 			for(let x = 0; x < board[y].length; x++){
@@ -117,7 +120,7 @@ let BoardUtils = {
 				}
 			}
 		}
-		resultList = BoardUtils._removeMatchedDuplicates(resultList, compareFunction);
+		resultList = BoardUtils._removeMatchedDuplicates(resultList, isDuplicateFunction);
 		return resultList;
 	},
 
@@ -125,14 +128,14 @@ let BoardUtils = {
 		Clear all matched elements with matchResult.
 		@arg {array} board - 2d array.
 		@arg {array} matchResult - can be obtained by invoking findMatchedAll.
-		@arg {object} empty - tell this function what is empty look like in the given board.
+		@arg {function} toEmptyFunction - what are you gonna do when an element is set to empty. Has 1 parameter with ele.
 		@return {array} - will return an array with removed elements. Formation is same to findMatched's result.
 	*/
-	clearMatched: function(board, matchResult, empty){
+	clearMatched: function(board, matchResult, toEmptyFunction){
 		let removedList = [];
 		matchResult.forEach((ele) => {
 			removedList.push({x: ele.x, y: ele.y, element: board[ele.y][ele.x]});
-			board[ele.y][ele.x] = empty;
+			board[ele.y][ele.x] = toEmptyFunction(ele);
 		});
 		return removedList;
 	},
@@ -140,21 +143,21 @@ let BoardUtils = {
 	/**
 		Make element fall when there are empty elements stay in the given board.
 		@arg {array} board - 2d array.
-		@arg {object} empty - tell this function what does empty look like in the given board.
+		@arg {function} isEmptyFunction - tell this function what does empty look like in the given board. Has 1 parameter with board[y][x].
 		@return {array} - will return an array with elements affected by gravity. Formation looks like following:
 			[
-				{fromX: 2, fromY: 0, toX: 2, toY: 5, type: 6},
-				{fromX: 3, fromY: 5, toX: 3, toY: 7, type: 2},
+				{fromX: 2, fromY: 0, toX: 2, toY: 5, element: 6},
+				{fromX: 3, fromY: 5, toX: 3, toY: 7, element: 2},
 				...
 			]
 	*/
-	triggerGravity: function(board, empty){
+	triggerGravity: function(board, isEmptyFunction){
 		let resultList = [];
 		for(let x = 0; x < board[0].length; x++){
 			for(let y = board[x].length - 1; y >= 0; y--){
-				if(board[y][x] === empty){
+				if(isEmptyFunction(board[y][x])){
 					for(let y2 = y - 1; y2 >= 0; y2--){
-						if(board[y2][x] !== empty){
+						if(!isEmptyFunction(board[y2][x])){
 							resultList.push({fromX: x, fromY: y, toX: x, toY: y2, element: board[y2][x]});
 							Matrix.swap(board, x, y, x, y2);
 							break;
@@ -167,17 +170,17 @@ let BoardUtils = {
 	},
 
 	/**
-		Fill empty elements with randomly picked type.
+		Fill empty elements with randomly picked element.
 		@arg {array} board - 2d array.
-		@arg {object} empty - tell this function what does empty look like in the given board.
+		@arg {function} isEmptyFunction - tell this function what does empty look like in the given board. Has 1 parameter with board[y][x].
 		@arg {function} generatorFunction - let user decide how new elements were made.
 		@return {array} - will return an array with elements used for filling the empty.
 	*/
-	fillEmpty: function(board, empty, generatorFunction){
+	fillEmpty: function(board, isEmptyFunction, generatorFunction){
 		let resultList = [];
 		for(let y = 0; y < board.length; y++){
 			for(let x = 0; x < board[y].length; x++){
-				if(board[y][x] === empty){
+				if(isEmptyFunction(board[y][x])){
 					board[y][x] = generatorFunction();
 					resultList.push({x: x, y: y, element: board[y][x]});
 				}
@@ -192,14 +195,17 @@ let BoardUtils = {
 		@arg {number} height - board height.
 		@arg {function} generatorFunction - let user decide how new elements were made.
 		@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+		@arg {function} isDuplicateFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+		@arg {function} onAgain - will be exeucted when not successfully create.
 		@return {2d-array} - give you an new board.
 	*/
-	createBoard: function(width, height, generatorFunction, compareFunction){
+	createBoard: function(width, height, generatorFunction, compareFunction, isDuplicateFunction, onAgain){
 		let board, matchedList, possibleMatchedList;
 		do{
+			if(onAgain){ onAgain(); }
 			board = Matrix.create(width, height, generatorFunction);
-			matchedList = BoardUtils.findMatchedAll(board, compareFunction);
-			possibleMatchedList = BoardUtils.findPossibleMatch(board, compareFunction);
+			matchedList = BoardUtils.findMatchedAll(board, compareFunction, isDuplicateFunction);
+			possibleMatchedList = BoardUtils.findPossibleMatch(board, compareFunction, isDuplicateFunction);
 		}while(matchedList.length > 0 || possibleMatchedList.length < 3);
 		return board;
 	},
@@ -236,11 +242,11 @@ let BoardUtils = {
 		}
 	},
 
-	_removeMatchedDuplicates: function(list, compareFunction){
+	_removeMatchedDuplicates: function(list, isDuplicateFunction){
 		let resultList = [];
 		for(let i = 0; i < list.length; i++){
 			let hasOne = resultList.find((ele) => {
-				if(list[i].x === ele.x && list[i].y === ele.y && compareFunction(list[i].element, ele.element)){
+				if(list[i].x === ele.x && list[i].y === ele.y && isDuplicateFunction(list[i].element, ele.element)){
 					return true;
 				}
 			});

@@ -38,11 +38,19 @@ var sampleBoard3 = [
 var sampleElements = [1,2,3,4,5,6,7,8,9];
 
 var compareFunc2 = function(ele1, ele2){
-	return (ele1 === ele2) ? true : false;
+	return ele1 === ele2;
 };
 
 var valueFunc = function(ele){
 	return ele;
+};
+
+var toEmptyFunc = function(){
+	return 0;
+};
+
+var isEmptyFunc = function(ele){
+	return ele === 0;
 };
 
 var genFunc = function(){
@@ -54,7 +62,7 @@ describe("BoardUtils", function(){
 	describe("removeMatchedDuplicates", function(){
 		it("should work as intention", function(){
 			var compareFunc1 = function(ele1, ele2){
-				return (ele1.num === ele2.num) ? true : false;
+				return ele1.num === ele2.num;
 			};
 			var dup = [];
 			for(var i = 0; i < 10; i++){
@@ -67,18 +75,18 @@ describe("BoardUtils", function(){
 
 	describe("findMatched", function(){
 		it("should work as intention", function(){
-			var result = bu.findMatched(sampleBoard, 5, 3, compareFunc2);
+			var result = bu.findMatched(sampleBoard, 5, 3, compareFunc2, compareFunc2);
 			expect(result).to.have.length(3);
-			result = bu.findMatched(sampleBoard, 0, 5, compareFunc2);
+			result = bu.findMatched(sampleBoard, 0, 5, compareFunc2, compareFunc2);
 			expect(result).to.have.length(5);
-			result = bu.findMatched(sampleBoard, 1, 1, compareFunc2);
+			result = bu.findMatched(sampleBoard, 1, 1, compareFunc2, compareFunc2);
 			expect(result).to.have.length(0);
 		});
 	});
 
 	describe("findMatchedAll", function(){
 		it("should work as intention", function(){
-			var result = bu.findMatchedAll(sampleBoard, compareFunc2);
+			var result = bu.findMatchedAll(sampleBoard, compareFunc2, compareFunc2);
 			expect(result).to.have.length(15);
 		});
 	});
@@ -123,9 +131,9 @@ describe("BoardUtils", function(){
 
 	describe("findPossibleMatch", function(){
 		it("should work as intention", function(){
-			var result1 = bu.findPossibleMatch(sampleBoard2, compareFunc2);
-			var result2 = bu.findPossibleMatch(sampleBoard3, compareFunc2);
-			var result3 = bu.findPossibleMatch(sampleBoard, compareFunc2);
+			var result1 = bu.findPossibleMatch(sampleBoard2, compareFunc2, compareFunc2);
+			var result2 = bu.findPossibleMatch(sampleBoard3, compareFunc2, compareFunc2);
+			var result3 = bu.findPossibleMatch(sampleBoard, compareFunc2, compareFunc2);
 			expect(result1).to.have.length(0);
 			expect(result2).to.have.length(19);
 			expect(result3).to.have.length(22);
@@ -135,8 +143,8 @@ describe("BoardUtils", function(){
 	describe("clearMatched", function(){
 		it("should work as intention", function(){
 			var clone = Matrix.clone(sampleBoard);
-			var matchedResult = bu.findMatchedAll(clone, compareFunc2);
-			var removedList = bu.clearMatched(clone, matchedResult, 0, compareFunc2);
+			var matchedResult = bu.findMatchedAll(clone, compareFunc2, compareFunc2);
+			var removedList = bu.clearMatched(clone, matchedResult, toEmptyFunc);
 			expect(matchedResult).to.eql(removedList);
 		});
 	});
@@ -144,9 +152,9 @@ describe("BoardUtils", function(){
 	describe("triggerGravity", function(){
 		it("should work as intention", function(){
 			var clone = Matrix.clone(sampleBoard);
-			var matchedResult = bu.findMatchedAll(clone, compareFunc2);
-			var removedList = bu.clearMatched(clone, matchedResult, 0);
-			var shiftedList = bu.triggerGravity(clone, 0);
+			var matchedResult = bu.findMatchedAll(clone, compareFunc2, compareFunc2);
+			var removedList = bu.clearMatched(clone, matchedResult, toEmptyFunc);
+			var shiftedList = bu.triggerGravity(clone, isEmptyFunc);
 			expect(shiftedList).to.eql([
 				{ fromX: 0, fromY: 5, toX: 0, toY: 4, element: 2 },
 			  { fromX: 0, fromY: 4, toX: 0, toY: 3, element: 1 },
@@ -181,12 +189,12 @@ describe("BoardUtils", function(){
 	describe("fillEmpty", function(){
 		it("should work as intention", function(){
 			var clone = Matrix.clone(sampleBoard);
-			var matchedResult = bu.findMatchedAll(clone, compareFunc2);
-			var removedList = bu.clearMatched(clone, matchedResult, 0);
+			var matchedResult = bu.findMatchedAll(clone, compareFunc2, compareFunc2);
+			var removedList = bu.clearMatched(clone, matchedResult, toEmptyFunc);
 			// bu.debugPrint(clone, null, valueFunc);
-			var shiftedList = bu.triggerGravity(clone, 0);
+			var shiftedList = bu.triggerGravity(clone, isEmptyFunc);
 			// bu.debugPrint(clone, null, valueFunc);
-			var filledList = bu.fillEmpty(clone, 0, genFunc);
+			var filledList = bu.fillEmpty(clone, isEmptyFunc, genFunc);
 			// bu.debugPrint(clone, null, valueFunc);
 		});
 	});
@@ -195,9 +203,9 @@ describe("BoardUtils", function(){
 		it("should work as intention", function(){
 			var board, matched, possibleMatched;
 			for(var i = 0; i < 100; i++){
-				board = bu.createBoard(8, 8, genFunc, compareFunc2);
-				matched = bu.findMatchedAll(board, compareFunc2);
-				possibleMatched = bu.findPossibleMatch(board, compareFunc2);
+				board = bu.createBoard(8, 8, genFunc, compareFunc2, compareFunc2);
+				matched = bu.findMatchedAll(board, compareFunc2, compareFunc2);
+				possibleMatched = bu.findPossibleMatch(board, compareFunc2, compareFunc2);
 				expect(matched).to.be.empty;
 				expect(possibleMatched).to.have.length.of.at.least(3);
 			}

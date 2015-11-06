@@ -1,6 +1,8 @@
 let GameConstants = {
-	SIZE_WIDTH: 8,
-	SIZE_HEIGHT: 8,
+	BOARD_WIDTH: 8,
+	BOARD_HEIGHT: 8,
+
+	TILE_SIZE: 32
 };
 
 export {GameConstants as default};

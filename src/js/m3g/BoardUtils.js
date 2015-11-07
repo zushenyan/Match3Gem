@@ -80,18 +80,25 @@ let BoardUtils = {
 	*/
 	testSwap: function(board, sourceX, sourceY, targetX, targetY, compareFunction){
 		if(!(Matrix.isInBound(board, sourceX, sourceY) && Matrix.isInBound(board, targetX, targetY))){ return false; }
-		if(!isNear(board, sourceX, sourceY, targetX, targetY)){ return false; }
+		if(!BoardUtils.isNear(sourceX, sourceY, targetX, targetY)){ return false; }
 		let cloneBoard = Matrix.clone(board);
 		Matrix.swap(cloneBoard, sourceX, sourceY, targetX, targetY);
 		let result = BoardUtils.findMatchedAll(cloneBoard, compareFunction);
 		return result.length >= 3 ? result : false;
+	},
 
-		function isNear(board, sourceX, sourceY, targetX, tagretY){
-			let diffX = Math.abs(targetX - sourceX);
-			let diffY = Math.abs(targetY - sourceY);
-			if(diffX > 1 || diffY > 1){ return false; }
-			return (Math.abs(diffX - diffY) === 1) ? true : false;
-		}
+	/**
+		Test if target point is only near center point's up, down, left, right. Center point is based on sourceX and sourceY.
+		@arg {number} sourceX - sourceX.
+		@arg {number} sourceY - sourceY.
+		@arg {number} targetX - targetX.
+		@arg {number} targetY - targetY.
+		@return {boolean} - true if it fulfills the requirements, false on not.
+	*/
+	isNear: function(sourceX, sourceY, targetX, targetY){
+		let diffX = Math.abs(targetX - sourceX);
+		let diffY = Math.abs(targetY - sourceY);
+		return (diffX + diffY === 1) ? true : false;
 	},
 
 	/**

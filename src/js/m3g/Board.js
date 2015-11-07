@@ -36,6 +36,10 @@ export default class Board {
 		return BoardUtils.testSwap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
 	}
 
+	isNear(sourceX, sourceY, targetX, targetY){
+		return BoardUtils.isNear(sourceX, sourceY, targetX, targetY);
+	}
+
 	swap(sourceX, sourceY, targetX, targetY){
 		return BoardUtils.swap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
 	}

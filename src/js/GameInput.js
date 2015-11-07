@@ -9,8 +9,8 @@ export default class GameInput {
 		this._firstPosition = null;
 	}
 
-	enableCapture(){ this._capture = true; }
-	disableCapture(){ this._capture = false; }
+	enableInput(){ this._capture = true; }
+	disableInput(){ this._capture = false; }
 
 	update(callback){
 		if(!this._capture){ return; }
@@ -20,10 +20,13 @@ export default class GameInput {
 				this._firstPosition = newCoord;
 			}
 			if(this._firstPosition.x !== newCoord.x || this._firstPosition.y !== newCoord.y){
+				this.disableInput();
 				callback(this._firstPosition, newCoord);
 				this._firstPosition = null;
-				this.disableCapture();
 			}
+		}
+		else{
+			this._firstPosition = null;
 		}
 	}
 }

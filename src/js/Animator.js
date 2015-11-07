@@ -1,7 +1,9 @@
 export default class Animator {
 	constructor(game){
 		this._spritePool = [];
+		this._actionSequence = [];
 		this._game = game;
+		this.isGravityOn = false;
 		this.hasAnimationFinished = null;
 	}
 
@@ -19,9 +21,33 @@ export default class Animator {
 		return sprite;
 	}
 
-	moveToX(id, destX){
-		
+	addAction(action){
+		this._actionSequence.push(action);
 	}
+
+	swapDest(sourceId, targetId){
+		this.addAction(() => {
+			let sourceSprite = this.getSprite(sourceId);
+			let targetSprite = this.getSprite(targetId);
+			let tempX = sourceSprite.destX;
+			let tempY = sourceSprite.destY;
+			sourceSprite.destX = targetSprite.destX;
+			targetSprite.destX = tempX;
+			sourceSprite.destY = targetSprite.destY;
+			targetSprite.destY = tempY;
+		});
+	}
+
+	moveTo(id, destX, destY){
+		this.addAction(() => {
+			let sprite = this.getSprite(id);
+			sprite.destX = destX;
+			sprite.destY = destY;
+		});
+	}
+
+	enableGravity(){ this.isGravityOn = true; }
+	disableGravity(){ this.isGravityOn = false; }
 
 	update(){
 		let hasAnimationFinished = true;
@@ -33,34 +59,50 @@ export default class Animator {
 			let diffX = destX - sprite.x;
 			let diffY = destY - sprite.y;
 
-			// deal with moveToX
+			// deal with move to y
 			if(diffX !== 0){
 				hasAnimationFinished = false;
 				if(diffX > 0){
-					sprite.x += 5;
+					sprite.x += 2;
 					if(sprite.x > destX){
 						sprite.x = destX;
 					}
 				}
 				else if(diffX < 0){
-					sprite.x -= 5;
+					sprite.x -= 2;
 					if(sprite.x < destX){
 						sprite.x = destX;
 					}
 				}
 			}
 
-			// deal with gravity
+			// deal with move to y
 			if(diffY !== 0){
 				hasAnimationFinished = false;
-				if(sprite.y < destY){
-					sprite.y += 5;
+				if(diffY > 0){
+					sprite.y += 2;
+					if(sprite.y > destY){
+						sprite.y = destY;
+					}
 				}
-				else if(sprite.y > destY){
-					sprite.y = destY;
+				else if(diffY < 0){
+					sprite.y -= 2;
+					if(sprite.y < destY){
+						sprite.y = destY;
+					}
 				}
 			}
 		}
 		this.hasAnimationFinished = hasAnimationFinished;
+		this._doActions();
+	}
+
+	_doActions(){
+		if(this.hasAnimationFinished){
+			let action = this._actionSequence.pop();
+			if(action){
+				action();
+			}
+		}
 	}
 }

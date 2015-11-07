@@ -1,5 +1,6 @@
 import Board from "./m3g/Board";
 import GameConstants from "./GameConstants";
+import GameUtils from "./GameUtils";
 import GameInput from "./GameInput";
 import Animator from "./Animator";
 
@@ -49,18 +50,30 @@ export default class GameScene{
 		this.soundFall = this.game.add.audio("sound_fall");
 		this.soundMatch = this.game.add.audio("sound_match");
 
-		this.gameInput.enableCapture();
+		this.gameInput.enableInput();
 
 		this._newBoard();
 	}
 
 	update(){
 		this.animator.update();
-		this.gameInput.update(this._inputCallback.bind(this));
+		if(this.animator.hasAnimationFinished){
+			this.gameInput.update(this._inputCallback.bind(this));
+		}
 	}
 
 	_inputCallback(oldCoord, newCoord){
-
+		let sourceId = this.board.getElementWithXY(oldCoord.x, oldCoord.y).id;
+		let targetId = this.board.getElementWithXY(newCoord.x, newCoord.y).id;
+		if(this.board.isNear(oldCoord.x, oldCoord.y, newCoord.x, newCoord.y)){
+			this.animator.swapDest(sourceId, targetId);
+			let swapResult = this.board.swap(oldCoord.x, oldCoord.y, newCoord.x, newCoord.y);
+			if(!swapResult){ this.animator.swapDest(sourceId, targetId); }
+			else{
+				this._clearMatchedGems(swapResult);
+			}
+		}
+		this.gameInput.enableInput();
 	}
 
 	_newBoard(){
@@ -79,5 +92,14 @@ export default class GameScene{
 		let destY = y * GameConstants.TILE_SIZE;
 		let spriteName = "gem" + type;
 		this.animator.addSprite(startX, startY, destX, destY, spriteName, id);
+	}
+
+	_clearMatchedGems(swapResult){
+		swapResult.forEach((ele) => {
+			let sprite = this.animator.getSprite(ele.element.id).sprite;
+			this.game.add.tween(sprite).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+		});
+		this.board.clearMatched(swapResult);
+		this.board.debugPrint(swapResult, Board.PRINT_ID);
 	}
 }

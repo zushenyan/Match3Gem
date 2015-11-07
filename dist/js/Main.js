@@ -4394,7 +4394,9 @@ var Animator = (function () {
 		_classCallCheck(this, Animator);
 
 		this._spritePool = [];
+		this._actionSequence = [];
 		this._game = game;
+		this.isGravityOn = false;
 		this.hasAnimationFinished = null;
 	}
 
@@ -4415,8 +4417,47 @@ var Animator = (function () {
 			return sprite;
 		}
 	}, {
-		key: "moveToX",
-		value: function moveToX(id, destX) {}
+		key: "addAction",
+		value: function addAction(action) {
+			this._actionSequence.push(action);
+		}
+	}, {
+		key: "swapDest",
+		value: function swapDest(sourceId, targetId) {
+			var _this = this;
+
+			this.addAction(function () {
+				var sourceSprite = _this.getSprite(sourceId);
+				var targetSprite = _this.getSprite(targetId);
+				var tempX = sourceSprite.destX;
+				var tempY = sourceSprite.destY;
+				sourceSprite.destX = targetSprite.destX;
+				targetSprite.destX = tempX;
+				sourceSprite.destY = targetSprite.destY;
+				targetSprite.destY = tempY;
+			});
+		}
+	}, {
+		key: "moveTo",
+		value: function moveTo(id, destX, destY) {
+			var _this2 = this;
+
+			this.addAction(function () {
+				var sprite = _this2.getSprite(id);
+				sprite.destX = destX;
+				sprite.destY = destY;
+			});
+		}
+	}, {
+		key: "enableGravity",
+		value: function enableGravity() {
+			this.isGravityOn = true;
+		}
+	}, {
+		key: "disableGravity",
+		value: function disableGravity() {
+			this.isGravityOn = false;
+		}
 	}, {
 		key: "update",
 		value: function update() {
@@ -4429,33 +4470,50 @@ var Animator = (function () {
 				var diffX = destX - sprite.x;
 				var diffY = destY - sprite.y;
 
-				// deal with moveToX
+				// deal with move to y
 				if (diffX !== 0) {
 					hasAnimationFinished = false;
 					if (diffX > 0) {
-						sprite.x += 5;
+						sprite.x += 2;
 						if (sprite.x > destX) {
 							sprite.x = destX;
 						}
 					} else if (diffX < 0) {
-						sprite.x -= 5;
+						sprite.x -= 2;
 						if (sprite.x < destX) {
 							sprite.x = destX;
 						}
 					}
 				}
 
-				// deal with gravity
+				// deal with move to y
 				if (diffY !== 0) {
 					hasAnimationFinished = false;
-					if (sprite.y < destY) {
-						sprite.y += 5;
-					} else if (sprite.y > destY) {
-						sprite.y = destY;
+					if (diffY > 0) {
+						sprite.y += 2;
+						if (sprite.y > destY) {
+							sprite.y = destY;
+						}
+					} else if (diffY < 0) {
+						sprite.y -= 2;
+						if (sprite.y < destY) {
+							sprite.y = destY;
+						}
 					}
 				}
 			}
 			this.hasAnimationFinished = hasAnimationFinished;
+			this._doActions();
+		}
+	}, {
+		key: "_doActions",
+		value: function _doActions() {
+			if (this.hasAnimationFinished) {
+				var action = this._actionSequence.pop();
+				if (action) {
+					action();
+				}
+			}
 		}
 	}]);
 
@@ -4539,13 +4597,13 @@ var GameInput = (function () {
 	}
 
 	_createClass(GameInput, [{
-		key: "enableCapture",
-		value: function enableCapture() {
+		key: "enableInput",
+		value: function enableInput() {
 			this._capture = true;
 		}
 	}, {
-		key: "disableCapture",
-		value: function disableCapture() {
+		key: "disableInput",
+		value: function disableInput() {
 			this._capture = false;
 		}
 	}, {
@@ -4560,10 +4618,12 @@ var GameInput = (function () {
 					this._firstPosition = newCoord;
 				}
 				if (this._firstPosition.x !== newCoord.x || this._firstPosition.y !== newCoord.y) {
+					this.disableInput();
 					callback(this._firstPosition, newCoord);
 					this._firstPosition = null;
-					this.disableCapture();
 				}
+			} else {
+				this._firstPosition = null;
 			}
 		}
 	}]);
@@ -4594,6 +4654,10 @@ var _m3gBoard2 = _interopRequireDefault(_m3gBoard);
 var _GameConstants = require("./GameConstants");
 
 var _GameConstants2 = _interopRequireDefault(_GameConstants);
+
+var _GameUtils = require("./GameUtils");
+
+var _GameUtils2 = _interopRequireDefault(_GameUtils);
 
 var _GameInput = require("./GameInput");
 
@@ -4636,7 +4700,7 @@ var GameScene = (function () {
 			this.soundFall = this.game.add.audio("sound_fall");
 			this.soundMatch = this.game.add.audio("sound_match");
 
-			this.gameInput.enableCapture();
+			this.gameInput.enableInput();
 
 			this._newBoard();
 		}
@@ -4644,11 +4708,26 @@ var GameScene = (function () {
 		key: "update",
 		value: function update() {
 			this.animator.update();
-			this.gameInput.update(this._inputCallback.bind(this));
+			if (this.animator.hasAnimationFinished) {
+				this.gameInput.update(this._inputCallback.bind(this));
+			}
 		}
 	}, {
 		key: "_inputCallback",
-		value: function _inputCallback(oldCoord, newCoord) {}
+		value: function _inputCallback(oldCoord, newCoord) {
+			var sourceId = this.board.getElementWithXY(oldCoord.x, oldCoord.y).id;
+			var targetId = this.board.getElementWithXY(newCoord.x, newCoord.y).id;
+			if (this.board.isNear(oldCoord.x, oldCoord.y, newCoord.x, newCoord.y)) {
+				this.animator.swapDest(sourceId, targetId);
+				var swapResult = this.board.swap(oldCoord.x, oldCoord.y, newCoord.x, newCoord.y);
+				if (!swapResult) {
+					this.animator.swapDest(sourceId, targetId);
+				} else {
+					this._clearMatchedGems(swapResult);
+				}
+			}
+			this.gameInput.enableInput();
+		}
 	}, {
 		key: "_newBoard",
 		value: function _newBoard() {
@@ -4669,6 +4748,18 @@ var GameScene = (function () {
 			var spriteName = "gem" + type;
 			this.animator.addSprite(startX, startY, destX, destY, spriteName, id);
 		}
+	}, {
+		key: "_clearMatchedGems",
+		value: function _clearMatchedGems(swapResult) {
+			var _this = this;
+
+			swapResult.forEach(function (ele) {
+				var sprite = _this.animator.getSprite(ele.element.id).sprite;
+				_this.game.add.tween(sprite).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+			});
+			this.board.clearMatched(swapResult);
+			this.board.debugPrint(swapResult, _m3gBoard2["default"].PRINT_ID);
+		}
 	}]);
 
 	return GameScene;
@@ -4677,7 +4768,7 @@ var GameScene = (function () {
 exports["default"] = GameScene;
 module.exports = exports["default"];
 
-},{"./Animator":189,"./GameConstants":191,"./GameInput":192,"./m3g/Board":196}],194:[function(require,module,exports){
+},{"./Animator":189,"./GameConstants":191,"./GameInput":192,"./GameUtils":194,"./m3g/Board":196}],194:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4819,6 +4910,11 @@ var Board = (function () {
 		key: "testSwap",
 		value: function testSwap(sourceX, sourceY, targetX, targetY) {
 			return _BoardUtils2["default"].testSwap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
+		}
+	}, {
+		key: "isNear",
+		value: function isNear(sourceX, sourceY, targetX, targetY) {
+			return _BoardUtils2["default"].isNear(sourceX, sourceY, targetX, targetY);
 		}
 	}, {
 		key: "swap",
@@ -5078,22 +5174,27 @@ var BoardUtils = {
 		if (!(_Matrix2["default"].isInBound(board, sourceX, sourceY) && _Matrix2["default"].isInBound(board, targetX, targetY))) {
 			return false;
 		}
-		if (!isNear(board, sourceX, sourceY, targetX, targetY)) {
+		if (!BoardUtils.isNear(sourceX, sourceY, targetX, targetY)) {
 			return false;
 		}
 		var cloneBoard = _Matrix2["default"].clone(board);
 		_Matrix2["default"].swap(cloneBoard, sourceX, sourceY, targetX, targetY);
 		var result = BoardUtils.findMatchedAll(cloneBoard, compareFunction);
 		return result.length >= 3 ? result : false;
+	},
 
-		function isNear(board, sourceX, sourceY, targetX, tagretY) {
-			var diffX = Math.abs(targetX - sourceX);
-			var diffY = Math.abs(targetY - sourceY);
-			if (diffX > 1 || diffY > 1) {
-				return false;
-			}
-			return Math.abs(diffX - diffY) === 1 ? true : false;
-		}
+	/**
+ 	Test if target point is only near center point's up, down, left, right. Center point is based on sourceX and sourceY.
+ 	@arg {number} sourceX - sourceX.
+ 	@arg {number} sourceY - sourceY.
+ 	@arg {number} targetX - targetX.
+ 	@arg {number} targetY - targetY.
+ 	@return {boolean} - true if it fulfills the requirements, false on not.
+ */
+	isNear: function isNear(sourceX, sourceY, targetX, targetY) {
+		var diffX = Math.abs(targetX - sourceX);
+		var diffY = Math.abs(targetY - sourceY);
+		return diffX + diffY === 1 ? true : false;
 	},
 
 	/**

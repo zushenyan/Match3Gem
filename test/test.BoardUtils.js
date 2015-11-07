@@ -91,6 +91,31 @@ describe("BoardUtils", function(){
 		});
 	});
 
+	describe("isNear", function(){
+		it("should work as intention", function(){
+			var result = bu.isNear(1, 1, 0, 1);
+			expect(result).to.be.true;
+			var result = bu.isNear(1, 1, 2, 1);
+			expect(result).to.be.true;
+			var result = bu.isNear(1, 1, 1, 0);
+			expect(result).to.be.true;
+			var result = bu.isNear(1, 1, 1, 2);
+			expect(result).to.be.true;
+			var result = bu.isNear(1, 1, 2, 2);
+			expect(result).to.be.false;
+			var result = bu.isNear(1, 1, 0, 0);
+			expect(result).to.be.false;
+			var result = bu.isNear(1, 1, 2, 0);
+			expect(result).to.be.false;
+			var result = bu.isNear(1, 1, 0, 2);
+			expect(result).to.be.false;
+			var result = bu.isNear(1, 1, 1, 1);
+			expect(result).to.be.false;
+			var result = bu.isNear(1, 1, 3, 5);
+			expect(result).to.be.false;
+		});
+	});
+
 	describe("testSwap", function(){
 		it("should return false when it's not valid", function(){
 			var result = bu.testSwap(sampleBoard2, 1, 4, 0, 4, compareFunc2);

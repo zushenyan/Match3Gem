@@ -2,9 +2,10 @@ import GameUtils from "./GameUtils";
 import GameConstants from "./GameConstants";
 
 export default class GameInput {
-	constructor(game){
+	constructor(game, callback){
 		this._game = game;
 
+		this._callback = callback;
 		this._capture = false
 		this._firstPosition = null;
 	}
@@ -12,7 +13,7 @@ export default class GameInput {
 	enableInput(){ this._capture = true; }
 	disableInput(){ this._capture = false; }
 
-	update(callback){
+	listen(){
 		if(!this._capture){ return; }
 		if(this._game.input.mousePointer.isDown){
 			let newCoord = GameUtils.convertToBoardPosition(this._game.input.x, this._game.input.y, GameConstants.TILE_SIZE);
@@ -20,8 +21,7 @@ export default class GameInput {
 				this._firstPosition = newCoord;
 			}
 			if(this._firstPosition.x !== newCoord.x || this._firstPosition.y !== newCoord.y){
-				this.disableInput();
-				callback(this._firstPosition, newCoord);
+				this._callback(this._firstPosition, newCoord);
 				this._firstPosition = null;
 			}
 		}

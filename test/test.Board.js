@@ -125,7 +125,7 @@ describe("Board", function(){
 			var result3 = board3.findPossibleMatch();
 			expect(result1).to.have.length(0);
 			expect(result2).to.have.length(19);
-			expect(result3).to.have.length(22);
+			expect(result3).to.have.length(30);
 		});
 	});
 
@@ -149,33 +149,33 @@ describe("Board", function(){
 			var removedList = board.clearMatched(matchedResult);
 			var shiftedList = board.triggerGravity();
 			expect(shiftedList).to.eql([
-				{ fromX: 0, fromY: 5, toX: 0, toY: 4, element: { type: 2, id: 32 } },
-  			{ fromX: 0, fromY: 4, toX: 0, toY: 3, element: { type: 1, id: 24 } },
-			  { fromX: 0, fromY: 3, toX: 0, toY: 2, element: { type: 1, id: 16 } },
-			  { fromX: 0, fromY: 2, toX: 0, toY: 1, element: { type: 3, id: 8 } },
-			  { fromX: 0, fromY: 1, toX: 0, toY: 0, element: { type: 2, id: 0 } },
-			  { fromX: 1, fromY: 5, toX: 1, toY: 4, element: { type: 3, id: 33 } },
-			  { fromX: 1, fromY: 4, toX: 1, toY: 3, element: { type: 1, id: 25 } },
-			  { fromX: 2, fromY: 5, toX: 2, toY: 4, element: { type: 7, id: 34 } },
-			  { fromX: 2, fromY: 4, toX: 2, toY: 3, element: { type: 4, id: 26 } },
-			  { fromX: 2, fromY: 3, toX: 2, toY: 2, element: { type: 1, id: 18 } },
-			  { fromX: 2, fromY: 2, toX: 2, toY: 1, element: { type: 4, id: 10 } },
-			  { fromX: 2, fromY: 1, toX: 2, toY: 0, element: { type: 4, id: 2 } },
-			  { fromX: 3, fromY: 5, toX: 3, toY: 4, element: { type: 8, id: 35 } },
-			  { fromX: 3, fromY: 4, toX: 3, toY: 3, element: { type: 3, id: 27 } },
-			  { fromX: 3, fromY: 3, toX: 3, toY: 2, element: { type: 2, id: 19 } },
-			  { fromX: 3, fromY: 2, toX: 3, toY: 1, element: { type: 5, id: 11 } },
-			  { fromX: 3, fromY: 1, toX: 3, toY: 0, element: { type: 5, id: 3 } },
-			  { fromX: 4, fromY: 5, toX: 4, toY: 0, element: { type: 6, id: 4 } },
-			  { fromX: 5, fromY: 3, toX: 5, toY: 2, element: { type: 1, id: 21 } },
-			  { fromX: 5, fromY: 2, toX: 5, toY: 1, element: { type: 1, id: 13 } },
-			  { fromX: 5, fromY: 1, toX: 5, toY: 0, element: { type: 7, id: 5 } },
-			  { fromX: 6, fromY: 3, toX: 6, toY: 2, element: { type: 1, id: 22 } },
-			  { fromX: 6, fromY: 2, toX: 6, toY: 1, element: { type: 1, id: 14 } },
-			  { fromX: 6, fromY: 1, toX: 6, toY: 0, element: { type: 8, id: 6 } },
-			  { fromX: 7, fromY: 3, toX: 7, toY: 2, element: { type: 6, id: 23 } },
-			  { fromX: 7, fromY: 2, toX: 7, toY: 1, element: { type: 2, id: 15 } },
-			  { fromX: 7, fromY: 1, toX: 7, toY: 0, element: { type: 9, id: 7 } } ]);
+				{ fromX: 0, fromY: 4, toX: 0, toY: 5, element: { type: 2, id: 32 } },
+  			{ fromX: 0, fromY: 3, toX: 0, toY: 4, element: { type: 1, id: 24 } },
+			  { fromX: 0, fromY: 2, toX: 0, toY: 3, element: { type: 1, id: 16 } },
+			  { fromX: 0, fromY: 1, toX: 0, toY: 2, element: { type: 3, id: 8 } },
+			  { fromX: 0, fromY: 0, toX: 0, toY: 1, element: { type: 2, id: 0 } },
+			  { fromX: 1, fromY: 4, toX: 1, toY: 5, element: { type: 3, id: 33 } },
+			  { fromX: 1, fromY: 3, toX: 1, toY: 4, element: { type: 1, id: 25 } },
+			  { fromX: 2, fromY: 4, toX: 2, toY: 5, element: { type: 7, id: 34 } },
+			  { fromX: 2, fromY: 3, toX: 2, toY: 4, element: { type: 4, id: 26 } },
+			  { fromX: 2, fromY: 2, toX: 2, toY: 3, element: { type: 1, id: 18 } },
+			  { fromX: 2, fromY: 1, toX: 2, toY: 2, element: { type: 4, id: 10 } },
+			  { fromX: 2, fromY: 0, toX: 2, toY: 1, element: { type: 4, id: 2 } },
+			  { fromX: 3, fromY: 4, toX: 3, toY: 5, element: { type: 8, id: 35 } },
+			  { fromX: 3, fromY: 3, toX: 3, toY: 4, element: { type: 3, id: 27 } },
+			  { fromX: 3, fromY: 2, toX: 3, toY: 3, element: { type: 2, id: 19 } },
+			  { fromX: 3, fromY: 1, toX: 3, toY: 2, element: { type: 5, id: 11 } },
+			  { fromX: 3, fromY: 0, toX: 3, toY: 1, element: { type: 5, id: 3 } },
+			  { fromX: 4, fromY: 0, toX: 4, toY: 5, element: { type: 6, id: 4 } },
+			  { fromX: 5, fromY: 2, toX: 5, toY: 3, element: { type: 1, id: 21 } },
+			  { fromX: 5, fromY: 1, toX: 5, toY: 2, element: { type: 1, id: 13 } },
+			  { fromX: 5, fromY: 0, toX: 5, toY: 1, element: { type: 7, id: 5 } },
+			  { fromX: 6, fromY: 2, toX: 6, toY: 3, element: { type: 1, id: 22 } },
+			  { fromX: 6, fromY: 1, toX: 6, toY: 2, element: { type: 1, id: 14 } },
+			  { fromX: 6, fromY: 0, toX: 6, toY: 1, element: { type: 8, id: 6 } },
+			  { fromX: 7, fromY: 2, toX: 7, toY: 3, element: { type: 6, id: 23 } },
+			  { fromX: 7, fromY: 1, toX: 7, toY: 2, element: { type: 2, id: 15 } },
+			  { fromX: 7, fromY: 0, toX: 7, toY: 1, element: { type: 9, id: 7 } } ]);
 		});
 	});
 

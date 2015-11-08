@@ -76,14 +76,15 @@ let BoardUtils = {
 		@arg {number} targetX - targetX.
 		@arg {number} targetY - targetY.
 		@arg {function} compareFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
+		@arg {function} isDuplicateFunction - used for comparing between two elements. Will pass two parameters: ele1 and ele2.
 		@return {array, boolean} - will return an list of matched elements. Only returns array with 3+ elements on success or false on failure.
 	*/
-	testSwap: function(board, sourceX, sourceY, targetX, targetY, compareFunction){
+	testSwap: function(board, sourceX, sourceY, targetX, targetY, compareFunction, isDuplicateFunction){
 		if(!(Matrix.isInBound(board, sourceX, sourceY) && Matrix.isInBound(board, targetX, targetY))){ return false; }
 		if(!BoardUtils.isNear(sourceX, sourceY, targetX, targetY)){ return false; }
 		let cloneBoard = Matrix.clone(board);
 		Matrix.swap(cloneBoard, sourceX, sourceY, targetX, targetY);
-		let result = BoardUtils.findMatchedAll(cloneBoard, compareFunction);
+		let result = BoardUtils.findMatchedAll(cloneBoard, compareFunction, isDuplicateFunction);
 		return result.length >= 3 ? result : false;
 	},
 
@@ -104,8 +105,8 @@ let BoardUtils = {
 	/**
 		Almost identical to testSwap, except it will modify original board on success.
 	*/
-	swap: function(board, sourceX, sourceY, targetX, targetY, compareFunction){
-		let result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY, compareFunction);
+	swap: function(board, sourceX, sourceY, targetX, targetY, compareFunction, isDuplicateFunction){
+		let result = BoardUtils.testSwap(board, sourceX, sourceY, targetX, targetY, compareFunction, isDuplicateFunction);
 		if(result){ Matrix.swap(board, sourceX, sourceY, targetX, targetY); }
 		return result;
 	},
@@ -165,7 +166,7 @@ let BoardUtils = {
 				if(isEmptyFunction(board[y][x])){
 					for(let y2 = y - 1; y2 >= 0; y2--){
 						if(!isEmptyFunction(board[y2][x])){
-							resultList.push({fromX: x, fromY: y, toX: x, toY: y2, element: board[y2][x]});
+							resultList.push({fromX: x, fromY: y2, toX: x, toY: y, element: board[y2][x]});
 							Matrix.swap(board, x, y, x, y2);
 							break;
 						}

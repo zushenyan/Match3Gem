@@ -33,7 +33,7 @@ export default class Board {
 	}
 
 	testSwap(sourceX, sourceY, targetX, targetY){
-		return BoardUtils.testSwap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
+		return BoardUtils.testSwap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction, this._isDuplicateFunction);
 	}
 
 	isNear(sourceX, sourceY, targetX, targetY){
@@ -41,7 +41,7 @@ export default class Board {
 	}
 
 	swap(sourceX, sourceY, targetX, targetY){
-		return BoardUtils.swap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction);
+		return BoardUtils.swap(this._board, sourceX, sourceY, targetX, targetY, this._compareFunction, this._isDuplicateFunction);
 	}
 
 	findPossibleMatch(){

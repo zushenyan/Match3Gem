@@ -35,6 +35,17 @@ var sampleBoard3 = [
 	[8,7,6,5,4,3,2,1]
 ];
 
+var sampleBoard4 = [
+	[1,2,3,4,5,6,7,8],
+	[8,7,6,7,7,3,2,1],
+	[1,2,3,4,5,6,7,8],
+	[8,7,6,5,1,3,2,1],
+	[1,7,7,4,7,6,7,8],
+	[8,1,6,5,1,3,2,1],
+	[1,7,3,4,2,6,7,8],
+	[8,9,6,5,4,3,2,1]
+];
+
 var sampleElements = [1,2,3,4,5,6,7,8,9];
 
 var compareFunc2 = function(ele1, ele2){
@@ -118,25 +129,25 @@ describe("BoardUtils", function(){
 
 	describe("testSwap", function(){
 		it("should return false when it's not valid", function(){
-			var result = bu.testSwap(sampleBoard2, 1, 4, 0, 4, compareFunc2);
+			var result = bu.testSwap(sampleBoard2, 1, 4, 0, 4, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard2, 1, 4, 3, 4, compareFunc2);
+			var result = bu.testSwap(sampleBoard2, 1, 4, 3, 4, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard2, 1, 4, 1, 4, compareFunc2);
+			var result = bu.testSwap(sampleBoard2, 1, 4, 1, 4, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard2, 1, 4, 5, 5, compareFunc2);
+			var result = bu.testSwap(sampleBoard2, 1, 4, 5, 5, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard2, 1, 4, -1, 5, compareFunc2);
+			var result = bu.testSwap(sampleBoard2, 1, 4, -1, 5, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard3, 1, 4, 2, 4, compareFunc2);
+			var result = bu.testSwap(sampleBoard3, 1, 4, 2, 4, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard3, 1, 4, 1, 3, compareFunc2);
+			var result = bu.testSwap(sampleBoard3, 1, 4, 1, 3, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
-			var result = bu.testSwap(sampleBoard3, 1, 4, 1, 5, compareFunc2);
+			var result = bu.testSwap(sampleBoard3, 1, 4, 1, 5, compareFunc2, compareFunc2);
 			expect(result).to.equal(false);
 		});
 		it("should return result when it's valid", function(){
-			var result = bu.testSwap(sampleBoard3, 1, 4, 0, 4, compareFunc2);
+			var result = bu.testSwap(sampleBoard3, 1, 4, 0, 4, compareFunc2, compareFunc2);
 			expect(result).to.have.length(3);
 		});
 	});
@@ -144,12 +155,12 @@ describe("BoardUtils", function(){
 	describe("swap", function(){
 		it("should not modify source on failure", function(){
 			var clone = Matrix.clone(sampleBoard2);
-			var result = bu.swap(clone, 1, 4, 0, 4, compareFunc2);
+			var result = bu.swap(clone, 1, 4, 0, 4, compareFunc2, compareFunc2);
 			expect(clone).to.eql(sampleBoard2);
 		});
 		it("should modify source on success", function(){
 			var clone = Matrix.clone(sampleBoard3);
-			var result = bu.swap(clone, 1, 4, 0, 4, compareFunc2);
+			var result = bu.swap(clone, 1, 4, 0, 4, compareFunc2, compareFunc2);
 			expect(clone).to.not.eql(sampleBoard3);
 		});
 	});
@@ -159,9 +170,11 @@ describe("BoardUtils", function(){
 			var result1 = bu.findPossibleMatch(sampleBoard2, compareFunc2, compareFunc2);
 			var result2 = bu.findPossibleMatch(sampleBoard3, compareFunc2, compareFunc2);
 			var result3 = bu.findPossibleMatch(sampleBoard, compareFunc2, compareFunc2);
+			var result4 = bu.findPossibleMatch(sampleBoard4, compareFunc2, compareFunc2);
 			expect(result1).to.have.length(0);
 			expect(result2).to.have.length(19);
-			expect(result3).to.have.length(22);
+			expect(result3).to.have.length(30);
+			expect(result4).to.have.length(11);
 		});
 	});
 
@@ -180,34 +193,34 @@ describe("BoardUtils", function(){
 			var matchedResult = bu.findMatchedAll(clone, compareFunc2, compareFunc2);
 			var removedList = bu.clearMatched(clone, matchedResult, toEmptyFunc);
 			var shiftedList = bu.triggerGravity(clone, isEmptyFunc);
-			expect(shiftedList).to.eql([
-				{ fromX: 0, fromY: 5, toX: 0, toY: 4, element: 2 },
-			  { fromX: 0, fromY: 4, toX: 0, toY: 3, element: 1 },
-			  { fromX: 0, fromY: 3, toX: 0, toY: 2, element: 1 },
-			  { fromX: 0, fromY: 2, toX: 0, toY: 1, element: 3 },
-			  { fromX: 0, fromY: 1, toX: 0, toY: 0, element: 2 },
-			  { fromX: 1, fromY: 5, toX: 1, toY: 4, element: 3 },
-			  { fromX: 1, fromY: 4, toX: 1, toY: 3, element: 1 },
-			  { fromX: 2, fromY: 5, toX: 2, toY: 4, element: 7 },
-			  { fromX: 2, fromY: 4, toX: 2, toY: 3, element: 4 },
-			  { fromX: 2, fromY: 3, toX: 2, toY: 2, element: 1 },
-			  { fromX: 2, fromY: 2, toX: 2, toY: 1, element: 4 },
-			  { fromX: 2, fromY: 1, toX: 2, toY: 0, element: 4 },
-			  { fromX: 3, fromY: 5, toX: 3, toY: 4, element: 8 },
-			  { fromX: 3, fromY: 4, toX: 3, toY: 3, element: 3 },
-			  { fromX: 3, fromY: 3, toX: 3, toY: 2, element: 2 },
-			  { fromX: 3, fromY: 2, toX: 3, toY: 1, element: 5 },
-			  { fromX: 3, fromY: 1, toX: 3, toY: 0, element: 5 },
-			  { fromX: 4, fromY: 5, toX: 4, toY: 0, element: 6 },
-			  { fromX: 5, fromY: 3, toX: 5, toY: 2, element: 1 },
-			  { fromX: 5, fromY: 2, toX: 5, toY: 1, element: 1 },
-			  { fromX: 5, fromY: 1, toX: 5, toY: 0, element: 7 },
-			  { fromX: 6, fromY: 3, toX: 6, toY: 2, element: 1 },
-			  { fromX: 6, fromY: 2, toX: 6, toY: 1, element: 1 },
-			  { fromX: 6, fromY: 1, toX: 6, toY: 0, element: 8 },
-			  { fromX: 7, fromY: 3, toX: 7, toY: 2, element: 6 },
-			  { fromX: 7, fromY: 2, toX: 7, toY: 1, element: 2 },
-			  { fromX: 7, fromY: 1, toX: 7, toY: 0, element: 9 } ]);
+			expect(shiftedList).to.eql( [
+				{ fromX: 0, fromY: 4, toX: 0, toY: 5, element: 2 },
+			  { fromX: 0, fromY: 3, toX: 0, toY: 4, element: 1 },
+			  { fromX: 0, fromY: 2, toX: 0, toY: 3, element: 1 },
+			  { fromX: 0, fromY: 1, toX: 0, toY: 2, element: 3 },
+			  { fromX: 0, fromY: 0, toX: 0, toY: 1, element: 2 },
+			  { fromX: 1, fromY: 4, toX: 1, toY: 5, element: 3 },
+			  { fromX: 1, fromY: 3, toX: 1, toY: 4, element: 1 },
+			  { fromX: 2, fromY: 4, toX: 2, toY: 5, element: 7 },
+			  { fromX: 2, fromY: 3, toX: 2, toY: 4, element: 4 },
+			  { fromX: 2, fromY: 2, toX: 2, toY: 3, element: 1 },
+			  { fromX: 2, fromY: 1, toX: 2, toY: 2, element: 4 },
+			  { fromX: 2, fromY: 0, toX: 2, toY: 1, element: 4 },
+			  { fromX: 3, fromY: 4, toX: 3, toY: 5, element: 8 },
+			  { fromX: 3, fromY: 3, toX: 3, toY: 4, element: 3 },
+			  { fromX: 3, fromY: 2, toX: 3, toY: 3, element: 2 },
+			  { fromX: 3, fromY: 1, toX: 3, toY: 2, element: 5 },
+			  { fromX: 3, fromY: 0, toX: 3, toY: 1, element: 5 },
+			  { fromX: 4, fromY: 0, toX: 4, toY: 5, element: 6 },
+			  { fromX: 5, fromY: 2, toX: 5, toY: 3, element: 1 },
+			  { fromX: 5, fromY: 1, toX: 5, toY: 2, element: 1 },
+			  { fromX: 5, fromY: 0, toX: 5, toY: 1, element: 7 },
+			  { fromX: 6, fromY: 2, toX: 6, toY: 3, element: 1 },
+			  { fromX: 6, fromY: 1, toX: 6, toY: 2, element: 1 },
+			  { fromX: 6, fromY: 0, toX: 6, toY: 1, element: 8 },
+			  { fromX: 7, fromY: 2, toX: 7, toY: 3, element: 6 },
+			  { fromX: 7, fromY: 1, toX: 7, toY: 2, element: 2 },
+			  { fromX: 7, fromY: 0, toX: 7, toY: 1, element: 9 } ]);
 		});
 	});
 

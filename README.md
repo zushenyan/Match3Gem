@@ -30,6 +30,6 @@ Change Log
 
 Author
 ===
-Program by Andrew Yan (aka zushenyan).
-Image are drawn by [1001.com](http://1001.com).
-Sounds are from [freesound](http://www.freesound.org).
+* Program by Andrew Yan (aka zushenyan).
+* Image are drawn by [1001.com](http://1001.com).
+* Sounds are from [freesound](http://www.freesound.org).

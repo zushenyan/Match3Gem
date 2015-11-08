@@ -230,11 +230,12 @@ let BoardUtils = {
 			for(let x = 0; x < board[y].length; x++){
 				boardOutput += valueFunction(board[y][x]) + ", ";
 				if(matchedResult){
-					let index = matchedResult.findIndex((ele, index, arr) => {
-						if(x === ele.x && y === ele.y){
-							return true;
+					let index;
+					for(let i = 0; i < matchedResult.length; i++){
+						if(x === matchedResult[i].x && y === matchedResult[i].y){
+							index = i;
 						}
-					});
+					}
 					matchedOutput += (index >= 0) ? (valueFunction(matchedResult[index].element) + ", ") : (" " + ", ");
 				}
 			}
@@ -253,9 +254,11 @@ let BoardUtils = {
 	_removeMatchedDuplicates: function(list, isDuplicateFunction){
 		let resultList = [];
 		for(let i = 0; i < list.length; i++){
-			let hasOne = resultList.find((ele) => {
+			let hasOne = false;
+			resultList.forEach((ele) => {
 				if(list[i].x === ele.x && list[i].y === ele.y && isDuplicateFunction(list[i].element, ele.element)){
-					return true;
+					hasOne = true;
+					return;
 				}
 			});
 			if(!hasOne){ resultList.push(list[i]); }

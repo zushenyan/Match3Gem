@@ -43,13 +43,15 @@ export default class GameScene{
 		for(let i = 0, j = i + 1; i < Board.TYPES.length; i++, j++){
 			this.game.load.image("gem" + j, "../media/" + j + ".png");
 		}
-		this.game.load.audio("sound_fall", "../media/gem_fall.wav");
-		this.game.load.audio("sound_match", "../media/gem_matched.wav");
+		this.game.load.audio("sound_fall", ["../media/gem_fall.wav", "../media/gem_fall.mp3"]);
+		this.game.load.audio("sound_match", ["../media/gem_matched.wav", "../media/gem_matched.mp3"]);
 	}
 
 	create(){
 		this.soundFall = this.game.add.audio("sound_fall");
 		this.soundMatch = this.game.add.audio("sound_match");
+		this.soundFall.volume = 0.1;
+		this.soundMatch.volume = 0.1;
 
 		this._newBoard();
 	}
@@ -80,7 +82,7 @@ export default class GameScene{
 				this._invalidSwap(sourceId, targetId);
 			}
 			else {
-				// to solve a problem that when player swipes his mouse through a corner of a gem, 
+				// to solve a problem that when player swipes his mouse through a corner of a gem,
 				// which will make left mouse button remain disable state.
 				this.taskManager.addTask(() => {
 					this.gameInput.enableInput();
@@ -144,6 +146,9 @@ export default class GameScene{
 				this.animationManager.removeSprite(ele.element.id);
 			});
 		});
+		this.taskManager.addTask(() => {
+			this.soundMatch.play();
+		});
 	}
 
 	_makeGemsFall(){
@@ -157,6 +162,9 @@ export default class GameScene{
 				this.animationManager.spriteFallTo(destY, ele.element.id, 225);
 			});
 		});
+		this.taskManager.addTask(() => {
+			this.soundFall.play();
+		});
 	}
 
 	_addGems(){
@@ -168,6 +176,9 @@ export default class GameScene{
 			results.forEach((ele) => {
 				this._createGem(ele.x, ele.y, ele.element.type, ele.element.id);
 			});
+		});
+		this.taskManager.addTask(() => {
+			this.soundFall.play();
 		});
 	}
 
@@ -214,6 +225,9 @@ export default class GameScene{
 		// after the previous one is done, allow mouse input.
 		this.taskManager.addTask(() => {
 			this.gameInput.enableInput();
+		});
+		this.taskManager.addTask(() => {
+			this.soundFall.play();
 		});
 	}
 

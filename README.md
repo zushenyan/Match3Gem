@@ -1,40 +1,37 @@
 Match3Gem
 =========
-A match-3 simple puzzle game aims for practice of JavaScript & Cocos2d-HTML5.
+A match-3 simple puzzle game aims for practice of JavaScript & Phaser.
+
+Originally it was written with Cocos2d-html5, but after a period of time, it became not runnable with old 2.1.5 version.
+
+I guess it's because it used some experimental features in browsers that were deprecated latter.
+
+Though upgrading to version 2.3.x can bring my game alive again, some behaviors were changed, which leads to some unexpected results and painful bug tracing work.
+
+Now, Cocos2d-html5 is merged with Cocos2d-JS and since its 3+ version has almost completely new design structure, it's almost like learning an new framework to me, so why not start over? That's why the game was reborn with Phaser.
 
 Support Platforms
 ===
-~~The latest version of Chrome, Safari, Firefox and Opera.~~
+The latest version of Chrome, Safari, Firefox, Opera and IE.
 
-~~For some unknown reasons Cocos2d-html5 seems not to work properly on Chrome and Opera. It works on Safari, but has performance issue. On Firefox it works well.~~
-
-~~Cocos2d-html5-v2.1.5 seems not fully support IE 10 at this moment.~~
-
-~~Does not support mobile browsers.~~
-
-It seems newer versions of browser have disabled some experimental features and since Cocos2d-html5 used some experimental browser features, this game won't work anymore. Although upgrading to 2.2.3 can bring it live again, some behaviors in 2.2.3 have changed, which may lead to some unexpected results.
+Phaser on IE has some problems when trying to load audio files.
 
 How to Run
 ===
-* Web - you can play it online [here](http://zushenyan.github.io/Match3Gem/).
-* SimpleHTTPServer - `cd` to this directory and type `username$ python -m SimpleHTTPServer`. Open browser and browse `localhost:8000/index.html`.
-* MAMP - toss this directory into your MAMP/htdocs and browse `localhost:[your mamp port]` in browser.
+
 
 How to Play
 ===
-Get as many scores as you can in 60 seconds.
-
-Pause icon for pause.
-
-Hint icon for hint.
+Use your mouse to drag a gem toward any direction you want to make an match.
 
 Change Log
 ===
+* ver 1.0 (2015/11/9)- Rewrite with Phaser.
 * ver 0.5 (2013/9/6) - The first stable version. Fixed many bugs ,still has many workarounds and bad codes. v_v
 * ver 0.4 (2013/9/4) - A very first playable version released. It should be runnable on Chrome and still needs further check on other platforms.
 
 Author
 ===
 Program by Andrew Yan (aka zushenyan).
-Pictures, of course, are drawn by myself.
-Sounds are from www.freesound.org.
+Image are drawn by [1001.com](http://1001.com).
+Sounds are from [freesound](http://www.freesound.org).

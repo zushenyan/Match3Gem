@@ -1,50 +1,16 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Match3gem : a match-3 game written in JavaScript with Cocos2d-html5." />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
+    <meta name="description" content="Match3gem : a match-3 game written in JavaScript with Phaser." />
     <title>Match3gem</title>
   </head>
-
   <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/zushenyan/Match3Gem">View on GitHub</a>
-
-          <h1 id="project_title">Match3gem</h1>
-          <h2 id="project_tagline">a match-3 game written in JavaScript with Cocos2d-html5.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/zushenyan/Match3Gem/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/zushenyan/Match3Gem/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <canvas id="gameCanvas" width="512" height="640"></canvas>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Match3gem maintained by <a href="https://github.com/zushenyan">zushenyan</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
+    <script src="dist/lib/phaser.min.js"></script>
+    <script src="dist/js/Main.min.js"></script>
+    <script>
+      new m3g.Boot();
+    </script>
   </body>
-  <script src="boot.js"></script>
 </html>

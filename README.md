@@ -24,7 +24,7 @@ Use your mouse to drag a gem toward any direction you want to make an match.
 
 Change Log
 ===
-* ver 1.0 (2015/11/9) - Rewrite with Phaser.
+* ver 2.0 (2015/11/9) - Rewrite with Phaser.
 * ver 0.5 (2013/9/6) - The first stable version. Fixed many bugs ,still has many workarounds and bad codes. v_v
 * ver 0.4 (2013/9/4) - A very first playable version released. It should be runnable on Chrome and still needs further check on other platforms.
 

@@ -9,7 +9,7 @@ Originally it was written with Cocos2d-html5, but after browsers updated, it bec
 
 My assumption is that Cocos2d-html5 used some experimental features which were deprecated in newer browsers.
 
-Although upgrading it to 2.3.x version can make it work again, some functions' behavior is changed, which leads to unexpected results and painful bug tracking.
+Although upgrading it to 2.3.x version can make it work again, some functions' behavior has changed, which leads to unexpected results and painful bug tracking.
 
 Since Cocos2d-html5 has been merged with Cocos2d-JS not long ago and 3+ version has been redeisgned, learning the new one means learning an totally new framework to me, so why not start over? That's why it was rewritten with Phaser.
 

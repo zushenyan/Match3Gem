@@ -7,7 +7,7 @@ A match-3 simple puzzle game aims for practicing JavaScript & Phaser.
 
 Originally it was written with Cocos2d-html5, but after browsers updated, it became not runnable anymore with the old 2.1.5 version.
 
-I assumption is that Cocos2d-html5 used some experimental features which were deprecated in newer browsers.
+My assumption is that Cocos2d-html5 used some experimental features which were deprecated in newer browsers.
 
 Although upgrading it to 2.3.x version can make it work again, some functions' behavior is changed, which leads to unexpected results and painful bug tracing.
 

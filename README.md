@@ -1,16 +1,17 @@
 Match3Gem
 =========
-A match-3 simple puzzle game aims for practice of JavaScript & Phaser.
-
-Originally it was written with Cocos2d-html5, but after a period of time, it became not runnable with old 2.1.5 version.
-
-I guess it's because it used some experimental features in browsers that were deprecated latter.
-
-Though upgrading to version 2.3.x can bring my game alive again, some behaviors were changed, which leads to some unexpected results and painful bug tracing work.
-
-Cocos2d-html5 has been merged with Cocos2d-JS not long ago and since 3+ version is almost an new design, it's like learning an totally new framework to me, so why not start over? That's why the game was reborn with Phaser.
 
 Play it [here](http://zushenyan.github.io/Match3Gem/dist/html/index.html).
+
+A match-3 simple puzzle game aims for practicing JavaScript & Phaser.
+
+Originally it was written with Cocos2d-html5, but after browsers envolved, it became not runnable anymore with the old 2.1.5 version.
+
+I assumption is that Cocos2d-html5 used some experimental features which were deprecated in newer browsers.
+
+Although upgrading it to 2.3.x version can make it work again, some functions' behavior is changed, which leads to unexpected results and painful bug tracing.
+
+Since Cocos2d-html5 has been merged with Cocos2d-JS not long ago and 3+ version has been redeisgned, learning the new one means learning an totally new framework to me, so why not start over? That's why it was rewritten with Phaser.
 
 Support Platforms
 ===

@@ -5,7 +5,7 @@ Play it [here](http://zushenyan.github.io/Match3Gem/dist/html/index.html).
 
 A match-3 simple puzzle game aims for practicing JavaScript & Phaser.
 
-Originally it was written with Cocos2d-html5, but after browsers envolved, it became not runnable anymore with the old 2.1.5 version.
+Originally it was written with Cocos2d-html5, but after browsers updated, it became not runnable anymore with the old 2.1.5 version.
 
 I assumption is that Cocos2d-html5 used some experimental features which were deprecated in newer browsers.
 

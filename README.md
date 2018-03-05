@@ -35,6 +35,6 @@ Author
 * Image are drawn by [1001.com](http://1001.com).
 * Sounds are from [freesound](http://www.freesound.org).
 
-Licence
+License
 ===
 https://github.com/zushenyan/Match3Gem/blob/master/LICENSE
